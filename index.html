@@ -6,109 +6,167 @@
 <title>EarlyEdge Field Pro</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#080808;--surface:#0f0f0f;--surface2:#141414;--border:#1e1e1e;--border2:#2a2a2a;--text:#e0e0e0;--muted:#555;--dim:#333;--green:#00C48C;--yellow:#F5C518;--orange:#FF7A00;--red:#FF3B3B;--font:'Courier New',monospace}
+:root{
+  --bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;
+  --border:#252525;--border2:#303030;
+  --text:#f0f0f0;--muted:#888;--dim:#555;
+  --green:#00C48C;--yellow:#F5C518;--orange:#FF7A00;--red:#FF3B3B;
+  --font:'Courier New',monospace
+}
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;max-width:480px;margin:0 auto;-webkit-font-smoothing:antialiased}
+
+/* HEADER */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
 .logo{font-size:17px;font-weight:700;letter-spacing:.1em;color:#fff}
 .logo-sub{font-size:9px;color:var(--muted);letter-spacing:.14em;margin-top:2px}
-.live-badge{font-size:9px;color:var(--green);letter-spacing:.1em;border:1px solid rgba(0,196,140,.25);border-radius:4px;padding:4px 8px}
+.live-badge{font-size:9px;color:var(--green);letter-spacing:.1em;border:1px solid rgba(0,196,140,.3);border-radius:4px;padding:4px 9px}
+
+/* TABS */
 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border-radius:6px;padding:3px;margin-bottom:16px;border:1px solid var(--border)}
-.tab{padding:9px;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:4px;font-size:11px;letter-spacing:.08em;font-family:var(--font);cursor:pointer}
+.tab{padding:10px;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:4px;font-size:12px;letter-spacing:.08em;font-family:var(--font);cursor:pointer}
 .tab.active{background:var(--surface2);color:#fff;border-color:var(--border2)}
+
+/* FORM */
 main{padding:16px}
-.field{margin-bottom:13px}
-label{display:block;font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:6px;text-transform:uppercase}
-label span{color:var(--dim);text-transform:none;margin-left:5px}
-input,select{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;padding:12px;font-size:14px;font-family:var(--font);appearance:none;outline:none}
-input.big{font-size:20px}
+.field{margin-bottom:14px}
+label{display:block;font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:7px;text-transform:uppercase}
+label span{color:var(--dim);text-transform:none;margin-left:5px;font-size:10px}
+input,select{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;padding:13px;font-size:15px;font-family:var(--font);appearance:none;outline:none}
+input:focus,select:focus{border-color:#404040}
+input.big{font-size:22px;font-weight:700}
 input.warn{border-color:var(--orange)}
 input.crit{border-color:var(--red)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.axis-label{font-size:9px;color:var(--dim);margin-bottom:4px}
-.axis-input{padding:10px 6px!important;text-align:center;font-size:13px!important}
-.vector-rms{font-size:10px;color:var(--muted);margin-top:5px}
-.advanced-toggle{width:100%;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:10px;font-family:var(--font);cursor:pointer;letter-spacing:.08em;margin-bottom:13px}
+.axis-label{font-size:10px;color:var(--dim);margin-bottom:5px}
+.axis-input{padding:11px 6px!important;text-align:center;font-size:14px!important}
+.vector-rms{font-size:11px;color:var(--muted);margin-top:6px}
+.advanced-toggle{width:100%;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:9px;font-size:11px;font-family:var(--font);cursor:pointer;letter-spacing:.08em;margin-bottom:14px}
 .advanced-section{display:none}
 .advanced-section.open{display:block}
+
+/* PHOTO */
 .photo-zone{border:1px dashed var(--border2);border-radius:8px;padding:28px 20px;text-align:center;margin-bottom:16px;background:var(--surface)}
 .photo-icon{font-size:36px;margin-bottom:10px}
-.photo-status{font-size:12px;color:var(--muted)}
+.photo-status{font-size:12px;color:var(--muted);line-height:1.5}
 .photo-status.ok{color:var(--green)}
 .photo-status.err{color:var(--red)}
 #preview-img{width:100%;border-radius:6px;margin-bottom:12px;max-height:180px;object-fit:contain;display:none}
-.photo-btn{margin-top:12px;background:var(--surface2);color:#ccc;border:1px solid var(--border2);border-radius:6px;padding:10px 18px;font-size:11px;font-family:var(--font);cursor:pointer}
-.run-btn{width:100%;background:#fff;color:#000;border:none;border-radius:6px;padding:16px;font-size:13px;font-family:var(--font);font-weight:700;letter-spacing:.12em;cursor:pointer;margin-top:4px}
+.photo-btn{margin-top:12px;background:var(--surface2);color:#ccc;border:1px solid var(--border2);border-radius:6px;padding:11px 18px;font-size:12px;font-family:var(--font);cursor:pointer}
+.photo-note{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
+
+/* BUTTONS */
+.run-btn{width:100%;background:#fff;color:#000;border:none;border-radius:6px;padding:17px;font-size:14px;font-family:var(--font);font-weight:700;letter-spacing:.12em;cursor:pointer;margin-top:4px}
 .run-btn:disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed}
-.error-box{background:#1a0000;border:1px solid #3a0000;border-radius:6px;padding:12px;color:var(--red);font-size:12px;margin-bottom:12px;display:none}
+
+/* ERROR */
+.error-box{background:#1a0000;border:1px solid #3a0000;border-radius:6px;padding:13px;color:var(--red);font-size:13px;margin-bottom:12px;display:none;line-height:1.5}
 .error-box.show{display:block}
+
+/* RESULTS */
 #results{display:none}
-.asset-meta{font-size:10px;color:var(--dim);letter-spacing:.1em;margin-bottom:10px}
-.stage-banner{border-left:4px solid;border-radius:8px;padding:18px 16px;margin-bottom:12px}
-.stage-label{font-size:26px;font-weight:900;letter-spacing:.06em;margin-bottom:8px}
-.vdi-bar-track{background:#0d0d0d;border-radius:3px;height:5px;margin-bottom:10px}
+
+/* ASSET SUMMARY CARD */
+.asset-summary{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.asset-name{font-size:14px;font-weight:700;color:#fff;letter-spacing:.05em;margin-bottom:4px}
+.asset-specs{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.8}
+.asset-specs span{color:#bbb}
+
+/* STAGE BANNER */
+.stage-banner{border-left:4px solid;border-radius:8px;padding:18px 16px;margin-bottom:4px}
+.stage-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.stage-label{font-size:28px;font-weight:900;letter-spacing:.06em}
+.stage-confidence{font-size:12px;color:var(--muted);text-align:right}
+.stage-confidence-val{font-size:18px;font-weight:700;display:block}
+.vdi-bar-track{background:rgba(0,0,0,0.4);border-radius:3px;height:5px;margin-bottom:10px}
 .vdi-bar-fill{height:100%;border-radius:3px;transition:width .6s}
-.stage-message{font-size:13px;color:#ccc;line-height:1.6}
-.bearing-alert{background:#1a0800;border:1px solid rgba(255,122,0,.2);border-left:3px solid var(--orange);border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--orange);display:none}
+.stage-message{font-size:14px;color:#ddd;line-height:1.6}
+
+/* PRIMARY FAULT */
+.primary-fault{background:rgba(0,0,0,0.3);border-radius:6px;padding:12px 14px;margin-top:12px;font-size:13px}
+.primary-fault-label{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
+.primary-fault-val{color:#fff;font-weight:700}
+
+/* PROGRESSION CARD */
+.progression-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.prog-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:14px}
+.prog-main{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.prog-days{font-size:44px;font-weight:700}
+.prog-unit{font-size:14px;color:var(--muted)}
+.prog-range{font-size:11px;color:var(--dim)}
+.prog-narrative{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.trend-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.trend-badge{padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.08em}
+.trend-rising{background:rgba(255,122,0,0.15);color:var(--orange);border:1px solid rgba(255,122,0,0.3)}
+.trend-stable{background:rgba(0,196,140,0.1);color:var(--green);border:1px solid rgba(0,196,140,0.2)}
+.accel-badge{background:rgba(255,59,59,0.15);color:var(--red);border:1px solid rgba(255,59,59,0.3);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700}
+
+/* BEARING ALERT */
+.bearing-alert{background:#1a0a00;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--orange);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--orange);line-height:1.5;display:none}
 .bearing-alert.show{display:block}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+
+/* ACTION CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
 .card-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:10px}
-.action-text{font-size:13px;color:#ddd;line-height:1.7}
-.next-check{font-size:11px;color:var(--muted);margin-top:10px}
-.next-check span{color:#888}
-.axis-row{margin-bottom:10px}
-.axis-header{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
-.axis-name{color:#888}
-.axis-val{color:#ccc}
-.axis-bar-track{background:#0d0d0d;border-radius:3px;height:4px}
+.action-text{font-size:14px;color:#e0e0e0;line-height:1.8}
+.next-check{font-size:12px;color:var(--muted);margin-top:10px}
+.next-check span{color:#bbb;font-weight:700}
+
+/* XYZ */
+.axis-row{margin-bottom:12px}
+.axis-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.axis-name{color:#aaa}
+.axis-val{color:#e0e0e0;font-weight:700}
+.axis-bar-track{background:#0d0d0d;border-radius:3px;height:5px}
 .axis-bar-fill{height:100%;border-radius:3px}
-.axis-fault{font-size:9px;color:var(--dim);margin-top:2px}
-.runway-days{display:flex;align-items:baseline;gap:8px}
-.runway-num{font-size:42px;font-weight:700}
-.runway-unit{font-size:13px;color:var(--muted)}
-.runway-range{font-size:10px;color:var(--dim)}
-.runway-narrative{font-size:11px;color:var(--muted);margin-top:5px}
-.accel-warning{font-size:11px;color:var(--orange);margin-top:6px}
-.cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.cost-cell{border-radius:6px;padding:12px}
-.cost-cell.now{background:#091209;border:1px solid #0d2a0d}
-.cost-cell.later{background:#120909;border:1px solid #2a0d0d}
-.cost-cell-label{font-size:9px;color:var(--muted);margin-bottom:4px}
-.cost-cell-value{font-size:22px;font-weight:700}
+.axis-fault{font-size:10px;color:var(--dim);margin-top:3px}
+
+/* COST */
+.cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.cost-cell{border-radius:8px;padding:14px}
+.cost-cell.now{background:#071a0f;border:1px solid #0d3020}
+.cost-cell.later{background:#1a0909;border:1px solid #300d0d}
+.cost-cell-label{font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:.08em}
+.cost-cell-sublabel{font-size:9px;color:var(--dim);margin-bottom:6px}
+.cost-cell-value{font-size:24px;font-weight:700}
 .cost-cell.now .cost-cell-value{color:var(--green)}
 .cost-cell.later .cost-cell-value{color:var(--red)}
-.cost-save{background:#091209;border:1px solid #0d2a0d;border-radius:6px;padding:10px;font-size:12px;color:var(--green);font-weight:700}
-.cost-range{font-size:10px;color:var(--dim);margin-top:5px}
-.cost-roi{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
+.cost-save{background:#071a0f;border:1px solid #0d3020;border-radius:8px;padding:13px;font-size:13px;color:var(--green);font-weight:700;margin-bottom:8px}
+.cost-range{font-size:11px;color:var(--dim);margin-bottom:6px}
+.cost-roi{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* READINGS */
 .readings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.reading-cell{background:#0d0d0d;border-radius:4px;padding:9px}
-.reading-label{font-size:9px;color:#3a3a3a;margin-bottom:3px}
-.reading-value{font-size:13px;color:#999}
-.reset-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:13px;font-size:11px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
-.print-btn{width:100%;background:transparent;color:#444;border:1px solid #1a1a1a;border-radius:6px;padding:11px;font-size:10px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
-footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text-align:center;letter-spacing:.1em}
-.temp-hint{font-size:10px;margin-top:4px}
+.reading-cell{background:#0f0f0f;border-radius:6px;padding:10px;border:1px solid var(--border)}
+.reading-label{font-size:10px;color:var(--muted);margin-bottom:3px}
+.reading-sublabel{font-size:9px;color:var(--dim);margin-bottom:5px}
+.reading-value{font-size:14px;color:#e0e0e0;font-weight:700}
+
+/* BUTTONS */
+.print-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:13px;font-size:12px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:10px}
+.reset-btn{width:100%;background:transparent;color:var(--dim);border:1px solid #1a1a1a;border-radius:6px;padding:13px;font-size:11px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
+
+footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;text-align:center;letter-spacing:.1em}
+.temp-hint{font-size:11px;margin-top:5px}
 .temp-hint.warn{color:var(--orange)}
 .temp-hint.crit{color:var(--red)}
-.photo-note{font-size:10px;color:#444;margin-top:8px;line-height:1.5}
 
-/* ── Print styles ── */
-@media print {
+/* PRINT */
+@media print{
   body{background:#fff;color:#000;max-width:none}
   header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle{display:none!important}
-  .card,.stage-banner{border-color:#999;background:#fff}
-  .stage-label,.runway-num{color:#000!important}
-  .cost-cell.now,.cost-cell.later{background:#f5f5f5;border-color:#ccc}
-  .cost-cell.now .cost-cell-value{color:#007a55!important}
+  .card,.stage-banner,.asset-summary,.progression-card{border-color:#999;background:#fff}
+  .stage-label,.prog-days{color:#000!important}
+  .cost-cell.now{background:#f0fff8;border-color:#aaa}
+  .cost-cell.later{background:#fff0f0;border-color:#aaa}
+  .cost-cell.now .cost-cell-value{color:#006644!important}
   .cost-cell.later .cost-cell-value{color:#cc0000!important}
-  .reading-cell{background:#f5f5f5}
-  .vdi-bar-track{background:#ddd}
-  .cost-save{background:#e8f5e9;border-color:#aaa;color:#007a55!important}
-  .action-text,.stage-message,.next-check,.runway-narrative,.cost-roi,.cost-range{color:#333!important}
-  .axis-name,.axis-val{color:#555!important}
-  .card-title,.asset-meta,.reading-label{color:#666!important}
-  .reading-value{color:#333!important}
+  .cost-save{background:#f0fff8;border-color:#aaa;color:#006644!important}
+  .reading-cell{background:#f5f5f5;border-color:#ddd}
+  .reading-value,.action-text,.stage-message,.asset-specs span{color:#222!important}
+  .axis-bar-track{background:#ddd}
   .bearing-alert.show{background:#fff3e0;border-color:#ff9800;color:#e65100!important}
+  .trend-badge,.accel-badge{border-color:#999}
 }
 </style>
 </head>
@@ -117,6 +175,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <div><div class="logo">EARLYEDGE</div><div class="logo-sub">FIELD DIAGNOSTIC · v2.5</div></div>
 <div class="live-badge">● LIVE</div>
 </header>
+
 <main>
 <div id="form-section">
 <div class="tabs">
@@ -124,17 +183,15 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <button class="tab" onclick="switchTab('photo')">📷 Scan Photo</button>
 </div>
 
-<!-- Photo zone -->
 <div class="photo-zone" id="photo-zone" style="display:none">
 <img id="preview-img" alt="preview">
 <div class="photo-icon" id="photo-icon">📷</div>
 <div class="photo-status" id="photo-status">Photo of gauge, display, or readout</div>
 <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
 <button class="photo-btn" onclick="document.getElementById('photo-input').click()" id="photo-btn">Choose Photo</button>
-<div class="photo-note">Photo extraction reads numbers from gauges and displays. Enter readings manually for best accuracy.</div>
+<div class="photo-note">AI reads numbers from gauges and displays. Enter manually for best accuracy.</div>
 </div>
 
-<!-- Asset -->
 <div class="field">
 <label>Asset Type</label>
 <select id="asset-select" onchange="assetChanged(this)">
@@ -210,7 +267,6 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <option value="slurry_pump">Slurry Pump</option>
 <option value="ball_mill">Ball Mill</option>
 <option value="sag_mill">SAG Mill</option>
-<option value="dust_collector_fan">Dust Collector Fan</option>
 <option value="crusher_motor">Crusher Motor</option>
 </optgroup>
 <optgroup label="⚡ Generation &amp; Power">
@@ -228,7 +284,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <option value="cooling_fan">Cooling Fan</option>
 <option value="hydraulic_power_unit">Hydraulic Power Unit</option>
 </optgroup>
-<optgroup label="📦 General / Catch-All">
+<optgroup label="📦 General">
 <option value="electric_motor">Electric Motor</option>
 <option value="pump">Pump</option>
 <option value="fan">Fan</option>
@@ -240,32 +296,24 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <option value="agitator_mixer">Agitator / Mixer</option>
 <option value="hydraulic_system">Hydraulic System</option>
 <option value="vacuum_pump">Vacuum Pump</option>
-<option value="blower">Blower</option>
 <option value="other_equipment" selected>Other Equipment</option>
 </optgroup>
 </select>
 </div>
 
-<!-- Asset ID -->
 <div class="field">
 <label>Asset ID <span>(optional — enables trend tracking)</span></label>
 <input type="text" id="asset-id" placeholder="e.g. pump-bay3-01">
 </div>
-
-<!-- RMS -->
 <div class="field">
 <label>RMS Velocity (mm/s) <span>* required if no XYZ</span></label>
 <input type="number" step="0.01" id="rms" placeholder="e.g. 4.2" class="big">
 </div>
-
-<!-- Bearing Temp -->
 <div class="field">
 <label>Bearing Temperature (°C) <span>(optional)</span></label>
 <input type="number" step="0.1" id="bearing-temp" placeholder="e.g. 62" oninput="tempChanged(this)">
 <div class="temp-hint" id="temp-hint"></div>
 </div>
-
-<!-- XYZ -->
 <div class="field">
 <label>XYZ Vibration (mm/s) <span>(optional — improves accuracy)</span></label>
 <div class="grid3">
@@ -276,10 +324,9 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 <div class="vector-rms" id="vector-rms"></div>
 </div>
 
-<!-- Advanced -->
 <button class="advanced-toggle" onclick="toggleAdvanced(this)">▼ Shaft &amp; Vane Data</button>
 <div class="advanced-section" id="advanced-section">
-<div class="grid2" style="margin-bottom:13px">
+<div class="grid2" style="margin-bottom:14px">
 <div class="field" style="margin-bottom:0"><label>Shaft RPM</label><input type="number" id="shaft-rpm" placeholder="1750"></div>
 <div class="field" style="margin-bottom:0"><label>Vane Count</label><input type="number" id="vane-count" placeholder="5"></div>
 </div>
@@ -291,337 +338,323 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#222;text
 
 <!-- RESULTS -->
 <div id="results">
-<div class="asset-meta" id="result-meta"></div>
 
-<div class="stage-banner" id="stage-banner">
-<div class="stage-label" id="stage-label"></div>
-<div class="vdi-bar-track"><div class="vdi-bar-fill" id="vdi-bar"></div></div>
-<div class="stage-message" id="stage-message"></div>
-</div>
+  <!-- Asset Summary Card -->
+  <div class="asset-summary">
+    <div class="asset-name" id="r-asset-name"></div>
+    <div class="asset-specs" id="r-asset-specs"></div>
+    <!-- Stage inline -->
+    <div class="stage-banner" id="stage-banner">
+      <div class="stage-row">
+        <div class="stage-label" id="stage-label"></div>
+        <div class="stage-confidence">
+          <span class="stage-confidence-val" id="r-confidence"></span>
+          Confidence
+        </div>
+      </div>
+      <div class="vdi-bar-track"><div class="vdi-bar-fill" id="vdi-bar"></div></div>
+      <div class="stage-message" id="stage-message"></div>
+      <div class="primary-fault" id="primary-fault" style="display:none">
+        <div class="primary-fault-label">PRIMARY FAULT INDICATOR</div>
+        <div class="primary-fault-val" id="primary-fault-val"></div>
+      </div>
+    </div>
+  </div>
 
-<div class="bearing-alert" id="bearing-alert"></div>
+  <!-- Bearing alert -->
+  <div class="bearing-alert" id="bearing-alert"></div>
 
-<div class="card">
-<div class="card-title">WHAT TO DO</div>
-<div class="action-text" id="action-text"></div>
-<div class="next-check" id="next-check"></div>
-</div>
+  <!-- Progression Card -->
+  <div class="progression-card" id="progression-card">
+    <div class="prog-title">ESTIMATED PROGRESSION WINDOW</div>
+    <div class="prog-main">
+      <span class="prog-days" id="prog-days"></span>
+      <span class="prog-unit">days</span>
+      <span class="prog-range" id="prog-range"></span>
+    </div>
+    <div class="prog-narrative" id="prog-narrative"></div>
+    <div class="trend-row">
+      <span class="trend-badge" id="trend-badge"></span>
+      <span class="accel-badge" id="accel-badge" style="display:none">⚡ Accelerating</span>
+    </div>
+  </div>
 
-<div class="card" id="xyz-card" style="display:none">
-<div class="card-title">VIBRATION AXES</div>
-<div id="xyz-rows"></div>
-</div>
+  <!-- What to do -->
+  <div class="card">
+    <div class="card-title">WHAT TO DO</div>
+    <div class="action-text" id="action-text"></div>
+    <div class="next-check" id="next-check"></div>
+  </div>
 
-<div class="card" id="runway-card" style="display:none">
-<div class="card-title">ESTIMATED TIME TO CRITICAL THRESHOLD</div>
-<div class="runway-days">
-<span class="runway-num" id="runway-days"></span>
-<span class="runway-unit">days</span>
-<span class="runway-range" id="runway-range"></span>
-</div>
-<div class="runway-narrative" id="runway-narrative"></div>
-<div class="accel-warning" id="accel-warning" style="display:none">⚠ Degradation rate accelerating</div>
-</div>
+  <!-- XYZ -->
+  <div class="card" id="xyz-card" style="display:none">
+    <div class="card-title">VIBRATION AXES</div>
+    <div id="xyz-rows"></div>
+  </div>
 
-<div class="card" id="cost-card" style="display:none">
-<div class="card-title">COST IMPACT (CAD)</div>
-<div class="cost-grid">
-<div class="cost-cell now"><div class="cost-cell-label">FIX NOW</div><div class="cost-cell-value" id="cost-now"></div></div>
-<div class="cost-cell later"><div class="cost-cell-label">FIX LATER</div><div class="cost-cell-value" id="cost-later"></div></div>
-</div>
-<div class="cost-save" id="cost-save"></div>
-<div class="cost-range" id="cost-range"></div>
-<div class="cost-roi" id="cost-roi"></div>
-</div>
+  <!-- Cost -->
+  <div class="card" id="cost-card" style="display:none">
+    <div class="card-title">COST IMPACT (CAD)</div>
+    <div class="cost-grid">
+      <div class="cost-cell now">
+        <div class="cost-cell-label">FIX NOW</div>
+        <div class="cost-cell-sublabel">Planned repair</div>
+        <div class="cost-cell-value" id="cost-now"></div>
+      </div>
+      <div class="cost-cell later">
+        <div class="cost-cell-label">FIX LATER</div>
+        <div class="cost-cell-sublabel" id="cost-later-label">Emergency event</div>
+        <div class="cost-cell-value" id="cost-later"></div>
+      </div>
+    </div>
+    <div class="cost-save" id="cost-save"></div>
+    <div class="cost-range" id="cost-range"></div>
+    <div class="cost-roi" id="cost-roi"></div>
+  </div>
 
-<div class="card">
-<div class="card-title">RAW READINGS</div>
-<div class="readings-grid" id="readings-grid"></div>
-</div>
+  <!-- Raw Readings -->
+  <div class="card">
+    <div class="card-title">DIAGNOSTIC READINGS</div>
+    <div class="readings-grid" id="readings-grid"></div>
+  </div>
 
-<button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
-<button class="reset-btn" onclick="resetForm()">← NEW DIAGNOSTIC</button>
+  <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
+  <button class="reset-btn" onclick="resetForm()">← NEW DIAGNOSTIC</button>
 </div>
 </main>
 <footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY</footer>
 
 <script>
 const API = 'https://earlyedge-api.onrender.com';
+const API_KEY = '';
+function apiHeaders(){const h={'Content-Type':'application/json'};if(API_KEY)h['x-api-key']=API_KEY;return h;}
 
-// API key for backend auth.
-// For public demo: set EARLYEDGE_ENV=dev on Render (no key required).
-// For locked production: set this to your key via a login prompt or environment.
-// Never hardcode a real key in public HTML — use the dev env approach for demos.
-const API_KEY = '';  // leave blank when running EARLYEDGE_ENV=dev on Render
-
-function apiHeaders() {
-  const h = { 'Content-Type': 'application/json' };
-  if (API_KEY) h['x-api-key'] = API_KEY;
-  return h;
-}
-
-// FIX: map frontend asset values to backend enum values
-// Backend AssetType enum must include these or they map to closest equivalent
 const ASSET_TYPE_MAP = {
-  // Greenhouse
-  haf_fan:               'haf_fan',
-  exhaust_fan:           'exhaust_fan',
-  circulation_pump:      'circulation_pump',
-  boiler_pump:           'boiler_pump',
-  nutrient_pump:         'nutrient_pump',
-  co2_compressor:        'co2_compressor',
-  co2_pump:              'co2_pump',
-  irrigation_pump:       'irrigation_pump',
-  condensate_pump:       'condensate_pump',
-  thermal_curtain_drive: 'thermal_curtain_drive',
-  hvac_unit:             'hvac_unit',
-  // Agriculture
-  auger_motor:               'auger_motor',
-  grain_bin_fan:             'grain_bin_fan',
-  grain_dryer:               'grain_dryer',
-  irrigation_pivot_drive:    'irrigation_pivot_drive',
-  manure_pump:               'manure_pump',
-  feed_conveyor:             'feed_conveyor',
-  grain_elevator_leg_motor:  'grain_elevator_leg_motor',
-  fertilizer_pump:           'fertilizer_pump',
-  vacuum_transfer_blower:    'vacuum_transfer_blower',
-  tractor:                   'tractor',
-  tractor_pto:               'tractor_pto',
-  grain_auger:               'grain_auger',
-  // Construction
-  skid_steer_hydraulic_pump:   'skid_steer_hydraulic_pump',
-  excavator_main_pump:         'excavator_main_pump',
-  wheel_loader_hydraulic_pump: 'wheel_loader_hydraulic_pump',
-  dozer_final_drive:           'dozer_final_drive',
-  excavator_final_drive:       'excavator_final_drive',
-  travel_motor:                'travel_motor',
-  asphalt_plant_motor:         'asphalt_plant_motor',
-  concrete_plant_mixer:        'concrete_plant_mixer',
-  crusher_bearing_assembly:    'crusher_bearing_assembly',
-  vibratory_roller_drum:       'vibratory_roller_drum',
-  hydraulic_pump:              'hydraulic_pump',
-  // Manufacturing
-  cnc_spindle:            'cnc_spindle',
-  injection_molding_machine: 'injection_molding_machine',
-  extruder:               'extruder',
-  packaging_line_motor:   'packaging_line_motor',
-  robotic_arm_servo:      'robotic_arm_servo',
-  dust_collector_fan:     'dust_collector_fan',
-  cooling_water_pump:     'cooling_water_pump',
-  process_pump:           'process_pump',
-  blower:                 'blower',
-  rotary_airlock:         'rotary_airlock',
-  // Municipal
-  lift_station_pump:  'lift_station_pump',
-  sewage_pump:        'sewage_pump',
-  aeration_blower:    'aeration_blower',
-  clarifier_drive:    'clarifier_drive',
-  sludge_pump:        'sludge_pump',
-  chemical_feed_pump: 'chemical_feed_pump',
-  well_pump:          'well_pump',
-  raw_water_pump:     'raw_water_pump',
-  high_service_pump:  'high_service_pump',
-  // Mining
-  rock_crusher:         'rock_crusher',
-  screen_deck_vibrator: 'screen_deck_vibrator',
-  stacker_conveyor:     'stacker_conveyor',
-  reclaimer_conveyor:   'reclaimer_conveyor',
-  thickener_drive:      'thickener_drive',
-  slurry_pump:          'slurry_pump',
-  ball_mill:            'ball_mill',
-  sag_mill:             'sag_mill',
-  crusher_motor:        'crusher_motor',
-  // Generation
-  diesel_generator:      'diesel_generator',
-  natural_gas_generator: 'natural_gas_generator',
-  standby_generator:     'standby_generator',
-  air_compressor:        'air_compressor',
-  // Oil & Gas
-  pipeline_pump:       'pipeline_pump',
-  transfer_pump:       'transfer_pump',
-  separator_pump:      'separator_pump',
-  compressor:          'compressor',
-  flare_blower:        'flare_blower',
-  cooling_fan:         'cooling_fan',
-  hydraulic_power_unit:'hydraulic_power_unit',
-  // General
-  electric_motor:  'electric_motor',
-  pump:            'pump',
-  fan:             'fan',
-  gearbox:         'gearbox',
-  bearing_housing: 'bearing_housing',
-  conveyor:        'conveyor',
-  generator:       'generator',
-  turbine:         'turbine',
-  agitator_mixer:  'agitator_mixer',
-  hydraulic_system:'hydraulic_system',
-  vacuum_pump:     'vacuum_pump',
-  other_equipment: 'other_equipment',
+  haf_fan:'haf_fan',exhaust_fan:'exhaust_fan',circulation_pump:'circulation_pump',
+  boiler_pump:'boiler_pump',nutrient_pump:'nutrient_pump',co2_compressor:'co2_compressor',
+  co2_pump:'co2_pump',irrigation_pump:'irrigation_pump',condensate_pump:'condensate_pump',
+  thermal_curtain_drive:'thermal_curtain_drive',hvac_unit:'hvac_unit',
+  auger_motor:'auger_motor',grain_bin_fan:'grain_bin_fan',grain_dryer:'grain_dryer',
+  irrigation_pivot_drive:'irrigation_pivot_drive',manure_pump:'manure_pump',
+  feed_conveyor:'feed_conveyor',grain_elevator_leg_motor:'grain_elevator_leg_motor',
+  fertilizer_pump:'fertilizer_pump',vacuum_transfer_blower:'vacuum_transfer_blower',
+  tractor:'tractor',tractor_pto:'tractor_pto',grain_auger:'grain_auger',
+  skid_steer_hydraulic_pump:'skid_steer_hydraulic_pump',excavator_main_pump:'excavator_main_pump',
+  wheel_loader_hydraulic_pump:'wheel_loader_hydraulic_pump',dozer_final_drive:'dozer_final_drive',
+  excavator_final_drive:'excavator_final_drive',travel_motor:'travel_motor',
+  asphalt_plant_motor:'asphalt_plant_motor',concrete_plant_mixer:'concrete_plant_mixer',
+  crusher_bearing_assembly:'crusher_bearing_assembly',vibratory_roller_drum:'vibratory_roller_drum',
+  hydraulic_pump:'hydraulic_pump',cnc_spindle:'cnc_spindle',
+  injection_molding_machine:'injection_molding_machine',extruder:'extruder',
+  packaging_line_motor:'packaging_line_motor',robotic_arm_servo:'robotic_arm_servo',
+  dust_collector_fan:'dust_collector_fan',cooling_water_pump:'cooling_water_pump',
+  process_pump:'process_pump',blower:'blower',rotary_airlock:'rotary_airlock',
+  lift_station_pump:'lift_station_pump',sewage_pump:'sewage_pump',
+  aeration_blower:'aeration_blower',clarifier_drive:'clarifier_drive',sludge_pump:'sludge_pump',
+  chemical_feed_pump:'chemical_feed_pump',well_pump:'well_pump',raw_water_pump:'raw_water_pump',
+  high_service_pump:'high_service_pump',rock_crusher:'rock_crusher',
+  screen_deck_vibrator:'screen_deck_vibrator',stacker_conveyor:'stacker_conveyor',
+  reclaimer_conveyor:'reclaimer_conveyor',thickener_drive:'thickener_drive',
+  slurry_pump:'slurry_pump',ball_mill:'ball_mill',sag_mill:'sag_mill',
+  crusher_motor:'crusher_motor',diesel_generator:'diesel_generator',
+  natural_gas_generator:'natural_gas_generator',standby_generator:'standby_generator',
+  air_compressor:'air_compressor',pipeline_pump:'pipeline_pump',transfer_pump:'transfer_pump',
+  separator_pump:'separator_pump',compressor:'compressor',flare_blower:'flare_blower',
+  cooling_fan:'cooling_fan',hydraulic_power_unit:'hydraulic_power_unit',
+  electric_motor:'electric_motor',pump:'pump',fan:'fan',gearbox:'gearbox',
+  bearing_housing:'bearing_housing',conveyor:'conveyor',generator:'generator',
+  turbine:'turbine',agitator_mixer:'agitator_mixer',hydraulic_system:'hydraulic_system',
+  vacuum_pump:'vacuum_pump',other_equipment:'other_equipment',
+};
+
+// Updated next-check intervals matching field expectations
+const NEXT_CHECK = {
+  healthy: '30–42 days',
+  watch:   '7–14 days',
+  urgent:  '1–3 days',
+  critical:'Immediate'
 };
 
 const STAGE = {
-  healthy:  {color:'#00C48C', bg:'#001a12', icon:'✓'},
-  watch:    {color:'#F5C518', bg:'#1a1600', icon:'⚠'},
-  urgent:   {color:'#FF7A00', bg:'#1a0c00', icon:'!'},
-  critical: {color:'#FF3B3B', bg:'#1a0000', icon:'✕'},
+  healthy: {color:'#00C48C',bg:'#021a0e',icon:'✓'},
+  watch:   {color:'#F5C518',bg:'#1a1400',icon:'⚠'},
+  urgent:  {color:'#FF7A00',bg:'#1a0900',icon:'!'},
+  critical:{color:'#FF3B3B',bg:'#1a0000',icon:'✕'},
 };
 
-let currentAssetType = 'other_equipment';
-let currentAssetLabel = 'Other Equipment';
+// Plain-English reading labels
+const READING_META = {
+  'VDI Score':    'Overall Health Score',
+  'Crest Factor': 'Impact / Shock Indicator',
+  'PCI':          'Pattern Instability',
+  'Entropy':      'Signal Disorder',
+  'Confidence':   'Result Confidence',
+  'Eff. RMS':     'Vibration Intensity',
+  'Bearing Temp': 'Bearing Temperature',
+  'TPE State':    'Waveform Analysis',
+};
 
-function switchTab(t) {
-  document.querySelectorAll('.tab').forEach((el,i) =>
-    el.classList.toggle('active', (i===0&&t==='manual')||(i===1&&t==='photo')));
-  document.getElementById('photo-zone').style.display = t==='photo' ? 'block' : 'none';
+let currentAssetType='other_equipment', currentAssetLabel='Other Equipment';
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='manual')||(i===1&&t==='photo')));
+  document.getElementById('photo-zone').style.display=t==='photo'?'block':'none';
 }
-
-function assetChanged(s) {
-  currentAssetType  = s.value;
-  currentAssetLabel = s.options[s.selectedIndex].text;
-}
-
-function tempChanged(input) {
-  const v = parseFloat(input.value);
-  const h = document.getElementById('temp-hint');
-  input.classList.remove('warn','crit');
-  h.textContent = '';
-  if (!isNaN(v)) {
-    if (v > 80) {
-      input.classList.add('crit');
-      h.className = 'temp-hint crit';
-      h.textContent = '⚠ Critical temp threshold';
-    } else if (v > 65) {
-      input.classList.add('warn');
-      h.className = 'temp-hint warn';
-      h.textContent = '⚠ Elevated — monitor closely';
-    }
+function assetChanged(s){currentAssetType=s.value;currentAssetLabel=s.options[s.selectedIndex].text;}
+function tempChanged(input){
+  const v=parseFloat(input.value),h=document.getElementById('temp-hint');
+  input.classList.remove('warn','crit');h.textContent='';
+  if(!isNaN(v)){
+    if(v>80){input.classList.add('crit');h.className='temp-hint crit';h.textContent='⚠ Critical — inspect bearing immediately';}
+    else if(v>65){input.classList.add('warn');h.className='temp-hint warn';h.textContent='⚠ Elevated — monitor closely';}
   }
 }
-
-function updateVector() {
-  const h = parseFloat(document.getElementById('vib-h').value)||0;
-  const v = parseFloat(document.getElementById('vib-v').value)||0;
-  const a = parseFloat(document.getElementById('vib-a').value)||0;
-  const el = document.getElementById('vector-rms');
-  el.textContent = (h||v||a) ? 'Vector RMS: '+Math.sqrt(h*h+v*v+a*a).toFixed(3)+' mm/s' : '';
+function updateVector(){
+  const h=parseFloat(document.getElementById('vib-h').value)||0;
+  const v=parseFloat(document.getElementById('vib-v').value)||0;
+  const a=parseFloat(document.getElementById('vib-a').value)||0;
+  const el=document.getElementById('vector-rms');
+  el.textContent=(h||v||a)?'Vector RMS: '+Math.sqrt(h*h+v*v+a*a).toFixed(3)+' mm/s':'';
 }
-
-function toggleAdvanced(b) {
-  const s = document.getElementById('advanced-section');
+function toggleAdvanced(b){
+  const s=document.getElementById('advanced-section');
   s.classList.toggle('open');
-  b.textContent = s.classList.contains('open') ? '▲ Shaft & Vane Data' : '▼ Shaft & Vane Data';
+  b.textContent=s.classList.contains('open')?'▲ Shaft & Vane Data':'▼ Shaft & Vane Data';
 }
-
-function getEffectiveRms() {
-  const h = parseFloat(document.getElementById('vib-h').value)||0;
-  const v = parseFloat(document.getElementById('vib-v').value)||0;
-  const a = parseFloat(document.getElementById('vib-a').value)||0;
-  if (h||v||a) return Math.sqrt(h*h+v*v+a*a);
+function getEffectiveRms(){
+  const h=parseFloat(document.getElementById('vib-h').value)||0;
+  const v=parseFloat(document.getElementById('vib-v').value)||0;
+  const a=parseFloat(document.getElementById('vib-a').value)||0;
+  if(h||v||a)return Math.sqrt(h*h+v*v+a*a);
   return parseFloat(document.getElementById('rms').value)||null;
 }
+function showError(m){const e=document.getElementById('error-box');e.textContent=m;e.classList.add('show');}
+function clearError(){document.getElementById('error-box').classList.remove('show');}
 
-function showError(m) { const e=document.getElementById('error-box'); e.textContent=m; e.classList.add('show'); }
-function clearError()  { document.getElementById('error-box').classList.remove('show'); }
-
-async function runDiagnostic() {
+async function runDiagnostic(){
   clearError();
-  const rms = getEffectiveRms();
-  if (!rms) { showError('Enter RMS velocity or at least one XYZ axis reading.'); return; }
-
-  const btn = document.getElementById('run-btn');
-  btn.disabled = true;
-  btn.textContent = 'ANALYZING...';
-
-  // FIX: map frontend asset type to backend enum
-  const backendAssetType = ASSET_TYPE_MAP[currentAssetType] || 'general';
-
-  const body = {
-    asset_type:   backendAssetType,
-    mode:         'field',
-    rms_velocity: rms,
-  };
-
-  const aid = document.getElementById('asset-id').value.trim();
-  if (aid) body.asset_id = aid;
-
-  const rpm = parseFloat(document.getElementById('shaft-rpm').value);
-  if (rpm) body.shaft_rpm = rpm;
-
-  const vanes = parseInt(document.getElementById('vane-count').value);
-  if (vanes) body.vane_count = vanes;
-
-  // FIX: bearing temp now sent to API as temperature_c
-  const bearingTemp = parseFloat(document.getElementById('bearing-temp').value);
-  if (!isNaN(bearingTemp)) body.temperature_c = bearingTemp;
-
-  try {
-    const res = await fetch(API + '/analyze', {
-      method: 'POST',
-      headers: apiHeaders(),
-      body: JSON.stringify(body),
+  const rms=getEffectiveRms();
+  if(!rms){showError('Enter RMS velocity or at least one XYZ axis reading.');return;}
+  const btn=document.getElementById('run-btn');
+  btn.disabled=true;btn.textContent='ANALYZING...';
+  const backendAssetType=ASSET_TYPE_MAP[currentAssetType]||'general';
+  const body={asset_type:backendAssetType,mode:'field',rms_velocity:rms};
+  const aid=document.getElementById('asset-id').value.trim();
+  if(aid)body.asset_id=aid;
+  const rpm=parseFloat(document.getElementById('shaft-rpm').value);if(rpm)body.shaft_rpm=rpm;
+  const vanes=parseInt(document.getElementById('vane-count').value);if(vanes)body.vane_count=vanes;
+  const bearingTemp=parseFloat(document.getElementById('bearing-temp').value);
+  if(!isNaN(bearingTemp))body.temperature_c=bearingTemp;
+  try{
+    const res=await fetch(API+'/analyze',{method:'POST',headers:apiHeaders(),body:JSON.stringify(body)});
+    if(!res.ok){const err=await res.json();throw new Error(err.detail||'API error');}
+    const data=await res.json();
+    renderResults(data,{
+      bearingTemp:!isNaN(bearingTemp)?bearingTemp:null,
+      vibH:parseFloat(document.getElementById('vib-h').value)||null,
+      vibV:parseFloat(document.getElementById('vib-v').value)||null,
+      vibA:parseFloat(document.getElementById('vib-a').value)||null,
+      effectiveRms:rms,assetLabel:currentAssetLabel,assetId:aid,
+      rpm:rpm||null,
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.detail || 'API error');
-    }
-    const data = await res.json();
-    renderResults(data, {
-      bearingTemp: !isNaN(bearingTemp) ? bearingTemp : null,
-      vibH: parseFloat(document.getElementById('vib-h').value)||null,
-      vibV: parseFloat(document.getElementById('vib-v').value)||null,
-      vibA: parseFloat(document.getElementById('vib-a').value)||null,
-      effectiveRms: rms,
-      assetLabel: currentAssetLabel,
-      assetId: aid,
-    });
-  } catch(e) {
+  }catch(e){
     showError(e.message);
-    btn.disabled = false;
-    btn.textContent = 'RUN DIAGNOSTIC';
+    btn.disabled=false;btn.textContent='RUN DIAGNOSTIC';
   }
 }
 
-function renderResults(data, extra) {
-  document.getElementById('form-section').style.display = 'none';
-  document.getElementById('results').style.display = 'block';
+function detectPrimaryFault(data,extra){
+  // Determine most likely fault from axis data and readings
+  if(!extra.vibH&&!extra.vibV&&!extra.vibA)return null;
+  const h=extra.vibH||0,v=extra.vibV||0,a=extra.vibA||0;
+  const max=Math.max(h,v,a);
+  if(max===a&&a>3)return'Misalignment / Axial Thrust developing';
+  if(max===h&&h>3)return'Imbalance / Looseness detected';
+  if(max===v&&v>3)return'Resonance / Structural Looseness detected';
+  if(data.crest_factor>3.5)return'Impact events detected — possible bearing wear';
+  return null;
+}
 
-  const s = STAGE[data.stage] || STAGE.critical;
+function renderResults(data,extra){
+  document.getElementById('form-section').style.display='none';
+  document.getElementById('results').style.display='block';
+  const s=STAGE[data.stage]||STAGE.critical;
+  const confidence=Math.round(data.confidence*100);
 
-  document.getElementById('result-meta').textContent =
-    extra.assetLabel.toUpperCase() + (extra.assetId ? ' · ' + extra.assetId : '');
+  // Asset summary
+  document.getElementById('r-asset-name').textContent=extra.assetLabel+(extra.assetId?' — '+extra.assetId:'');
+  const specs=[];
+  if(extra.rpm)specs.push('RPM: <span>'+extra.rpm+'</span>');
+  if(extra.bearingTemp)specs.push('Temp: <span>'+extra.bearingTemp+'°C</span>');
+  specs.push('RMS: <span>'+extra.effectiveRms.toFixed(2)+' mm/s</span>');
+  document.getElementById('r-asset-specs').innerHTML=specs.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
 
-  const banner = document.getElementById('stage-banner');
-  banner.style.background     = s.bg;
-  banner.style.borderLeftColor = s.color;
-  document.getElementById('stage-label').style.color = s.color;
-  document.getElementById('stage-label').textContent  = s.icon + ' ' + data.stage.toUpperCase();
-  document.getElementById('vdi-bar').style.width      = data.vdi_score + '%';
-  document.getElementById('vdi-bar').style.background = 'linear-gradient(90deg,#00C48C,' + s.color + ')';
-  document.getElementById('stage-message').textContent = data.message;
+  // Stage
+  const banner=document.getElementById('stage-banner');
+  banner.style.background=s.bg;banner.style.borderLeftColor=s.color;
+  document.getElementById('stage-label').style.color=s.color;
+  document.getElementById('stage-label').textContent=s.icon+' '+data.stage.toUpperCase();
+  document.getElementById('r-confidence').style.color=s.color;
+  document.getElementById('r-confidence').textContent=confidence+'%';
+  document.getElementById('vdi-bar').style.width=data.vdi_score+'%';
+  document.getElementById('vdi-bar').style.background='linear-gradient(90deg,#00C48C,'+s.color+')';
+  document.getElementById('stage-message').textContent=data.message;
+
+  // Primary fault
+  const fault=detectPrimaryFault(data,extra);
+  if(fault){
+    document.getElementById('primary-fault').style.display='block';
+    document.getElementById('primary-fault-val').textContent=fault;
+  }
 
   // Bearing alert
-  const ba = document.getElementById('bearing-alert');
-  if (extra.bearingTemp && extra.bearingTemp > 65) {
-    ba.textContent = '🌡 Bearing temp ' + extra.bearingTemp + '°C — ' +
-      (extra.bearingTemp > 80 ? 'CRITICAL: inspect immediately.' : 'elevated, monitor closely.');
+  const ba=document.getElementById('bearing-alert');
+  if(extra.bearingTemp&&extra.bearingTemp>65){
+    ba.textContent='🌡 Bearing temp '+extra.bearingTemp+'°C — '+(extra.bearingTemp>80?'CRITICAL: stop and inspect immediately.':'elevated, monitor closely.');
     ba.classList.add('show');
   }
 
-  document.getElementById('action-text').textContent = data.recommended_action;
-  const hrs = data.next_check_interval_hours;
-  document.getElementById('next-check').innerHTML =
-    'Next check: <span>' + (hrs >= 24 ? (hrs/24)+' day(s)' : hrs+' hr(s)') + '</span>';
+  // Progression card
+  const dtf=data.days_to_failure;
+  const pc=document.getElementById('progression-card');
+  if(dtf&&dtf.status==='valid'&&dtf.days_estimate!==null&&dtf.days_estimate!==undefined){
+    document.getElementById('prog-days').style.color=s.color;
+    document.getElementById('prog-days').textContent=Math.round(dtf.days_estimate);
+    if(dtf.days_lower!=null&&dtf.days_upper!=null){
+      document.getElementById('prog-range').textContent='('+Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' day range)';
+    }
+    document.getElementById('prog-narrative').textContent=dtf.confidence_narrative||'';
+    const tb=document.getElementById('trend-badge');
+    if(dtf.trend_direction==='rising'){
+      tb.textContent='▲ Rising';tb.className='trend-badge trend-rising';
+    }else{
+      tb.textContent='→ Stable / Improving';tb.className='trend-badge trend-stable';
+    }
+    if(dtf.acceleration_detected){
+      document.getElementById('accel-badge').style.display='inline-block';
+    }
+  }else{
+    // Show static progression guidance based on stage
+    const stageDays={healthy:'30–42',watch:'7–21',urgent:'1–5',critical:'0–2'};
+    document.getElementById('prog-days').style.color=s.color;
+    document.getElementById('prog-days').textContent=data.stage==='critical'?'0':stageDays[data.stage].split('–')[0];
+    document.getElementById('prog-range').textContent=data.stage!=='critical'?'('+stageDays[data.stage]+' day estimated window)':'';
+    document.getElementById('prog-narrative').textContent=
+      data.stage==='healthy'?'Asset is healthy. Continue standard monitoring to track trends over time.':
+      'Estimated window based on current stage. Add asset ID and run repeat scans to build trend history.';
+    const tb=document.getElementById('trend-badge');
+    tb.textContent='→ Insufficient history';tb.className='trend-badge trend-stable';
+  }
 
-  // XYZ axes
-  const axes = [
-    ['Horizontal', extra.vibH, 'Imbalance / Looseness'],
-    ['Vertical',   extra.vibV, 'Looseness / Resonance'],
-    ['Axial',      extra.vibA, 'Misalignment / Thrust'],
-  ].filter(([,v]) => v !== null);
+  // Action
+  document.getElementById('action-text').textContent=data.recommended_action;
+  document.getElementById('next-check').innerHTML='Next check: <span>'+NEXT_CHECK[data.stage]+'</span>';
 
-  if (axes.length) {
-    document.getElementById('xyz-card').style.display = 'block';
-    document.getElementById('xyz-rows').innerHTML = axes.map(([n,v,f]) => `
+  // XYZ
+  const axes=[['Horizontal',extra.vibH,'Imbalance / Looseness'],['Vertical',extra.vibV,'Looseness / Resonance'],['Axial',extra.vibA,'Misalignment / Thrust']].filter(([,v])=>v!==null);
+  if(axes.length){
+    document.getElementById('xyz-card').style.display='block';
+    document.getElementById('xyz-rows').innerHTML=axes.map(([n,v,f])=>`
       <div class="axis-row">
         <div class="axis-header"><span class="axis-name">${n}</span><span class="axis-val">${v} mm/s</span></div>
         <div class="axis-bar-track"><div class="axis-bar-fill" style="width:${Math.min(100,(v/20)*100)}%;background:${s.color}"></div></div>
@@ -629,155 +662,96 @@ function renderResults(data, extra) {
       </div>`).join('');
   }
 
-  // FIX: show runway card even when days_estimate === 0
-  const dtf = data.days_to_failure;
-  if (dtf && dtf.status !== 'insufficient_data' && dtf.days_estimate !== null && dtf.days_estimate !== undefined) {
-    document.getElementById('runway-card').style.display = 'block';
-    document.getElementById('runway-days').style.color   = s.color;
-    document.getElementById('runway-days').textContent   = Math.round(dtf.days_estimate);
-    if (dtf.days_lower != null && dtf.days_upper != null) {
-      document.getElementById('runway-range').textContent =
-        '(' + Math.round(dtf.days_lower) + '–' + Math.round(dtf.days_upper) + ')';
-    }
-    document.getElementById('runway-narrative').textContent = dtf.confidence_narrative || '';
-    if (dtf.acceleration_detected) {
-      document.getElementById('accel-warning').style.display = 'block';
-    }
-  }
-
   // Cost
-  const cost = data.cost_impact;
-  if (cost && cost.fix_later_cost > 0) {
-    document.getElementById('cost-card').style.display = 'block';
-    document.getElementById('cost-now').textContent   = '$' + cost.fix_now_cost.toLocaleString();
-    document.getElementById('cost-later').textContent = '$' + cost.fix_later_cost.toLocaleString();
-    const avoided = cost.estimated_avoided_cost || cost.estimated_savings || 0;
-    const isHealthy = (cost.fix_now_cost === 0);
-    if (isHealthy) {
-      document.getElementById('cost-save').textContent =
-        'Protected exposure: $' + cost.fix_later_cost.toLocaleString() + ' CAD';
-      document.getElementById('cost-range').textContent =
-        'No repair needed today. This is the cost if the asset were to fail unexpectedly.';
-    } else {
-      document.getElementById('cost-save').textContent =
-        'Estimated avoided cost: $' + avoided.toLocaleString() + ' (' + cost.savings_pct + '%)';
-      if (cost.estimated_range) {
-        document.getElementById('cost-range').textContent =
-          'Range: $' + cost.estimated_range.low.toLocaleString() +
-          ' – $' + cost.estimated_range.high.toLocaleString() + ' CAD';
-      }
+  const cost=data.cost_impact;
+  if(cost&&cost.fix_later_cost>0){
+    document.getElementById('cost-card').style.display='block';
+    const isHealthy=cost.fix_now_cost===0;
+    document.getElementById('cost-now').textContent=isHealthy?'—':'$'+cost.fix_now_cost.toLocaleString();
+    document.getElementById('cost-later').textContent='$'+cost.fix_later_cost.toLocaleString();
+    const assetLabel=extra.assetLabel.replace(/ /g,' ');
+    document.getElementById('cost-later-label').textContent='Estimated '+assetLabel+' failure event';
+    if(isHealthy){
+      document.getElementById('cost-save').textContent='Protected exposure: $'+cost.fix_later_cost.toLocaleString()+' CAD';
+      document.getElementById('cost-range').textContent='No repair needed. This is the financial risk you are protecting against.';
+      document.getElementById('cost-roi').textContent=cost.note||'';
+    }else{
+      const avoided=cost.estimated_avoided_cost||0;
+      document.getElementById('cost-save').textContent='Estimated avoided cost: $'+avoided.toLocaleString()+' ('+cost.savings_pct+'%)';
+      if(cost.estimated_range)document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';
+      document.getElementById('cost-roi').textContent=cost.roi_window;
     }
-    document.getElementById('cost-roi').textContent = cost.roi_window;
   }
 
-  // Readings grid
-  const readings = [
-    ['VDI Score',    data.vdi_score + ' / 100'],
-    ['Crest Factor', data.crest_factor],
-    ['PCI',          data.pci],
-    ['Entropy',      data.spectral_entropy],
-    ['Confidence',   Math.round(data.confidence * 100) + '%'],
-    ['Eff. RMS',     extra.effectiveRms.toFixed(3) + ' mm/s'],
+  // Readings with plain-English labels
+  const readings=[
+    ['VDI Score',data.vdi_score+' / 100'],
+    ['Crest Factor',data.crest_factor],
+    ['PCI',data.pci],
+    ['Entropy',data.spectral_entropy],
+    ['Confidence',confidence+'%'],
+    ['Eff. RMS',extra.effectiveRms.toFixed(3)+' mm/s'],
   ];
-  if (extra.bearingTemp) readings.push(['Bearing Temp', extra.bearingTemp + '°C']);
-  if (data.tpe_label)    readings.push(['TPE State',    data.tpe_label]);
-
-  document.getElementById('readings-grid').innerHTML = readings.map(([l,v]) => `
+  if(extra.bearingTemp)readings.push(['Bearing Temp',extra.bearingTemp+'°C']);
+  if(data.tpe_label&&data.tpe_label!=='not_available')readings.push(['TPE State',data.tpe_label]);
+  document.getElementById('readings-grid').innerHTML=readings.map(([l,v])=>`
     <div class="reading-cell">
       <div class="reading-label">${l}</div>
+      <div class="reading-sublabel">${READING_META[l]||''}</div>
       <div class="reading-value">${v}</div>
     </div>`).join('');
 }
 
-function resetForm() {
-  document.getElementById('form-section').style.display = 'block';
-  document.getElementById('results').style.display = 'none';
-  document.getElementById('run-btn').disabled = false;
-  document.getElementById('run-btn').textContent = 'RUN DIAGNOSTIC';
+function resetForm(){
+  document.getElementById('form-section').style.display='block';
+  document.getElementById('results').style.display='none';
+  document.getElementById('run-btn').disabled=false;
+  document.getElementById('run-btn').textContent='RUN DIAGNOSTIC';
   document.getElementById('bearing-alert').classList.remove('show');
-  ['xyz-card','runway-card','cost-card'].forEach(id =>
-    document.getElementById(id).style.display = 'none');
-  document.getElementById('accel-warning').style.display = 'none';
-  document.getElementById('temp-hint').textContent = '';
-  document.getElementById('vector-rms').textContent = '';
-  document.getElementById('cost-save').textContent = '';
-  document.getElementById('cost-range').textContent = '';
-  document.getElementById('cost-roi').textContent = '';
-  document.getElementById('runway-range').textContent = '';
-  document.getElementById('runway-narrative').textContent = '';
-  document.getElementById('preview-img').style.display = 'none';
-  document.getElementById('photo-icon').style.display = 'block';
-  document.getElementById('photo-status').textContent = 'Photo of gauge, display, or readout';
-  document.getElementById('photo-status').className = 'photo-status';
-  document.getElementById('photo-btn').textContent = 'Choose Photo';
+  document.getElementById('primary-fault').style.display='none';
+  ['xyz-card','cost-card'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('accel-badge').style.display='none';
+  document.getElementById('cost-save').textContent='';
+  document.getElementById('cost-range').textContent='';
+  document.getElementById('cost-roi').textContent='';
+  document.getElementById('prog-range').textContent='';
+  document.getElementById('prog-narrative').textContent='';
+  document.getElementById('temp-hint').textContent='';
+  document.getElementById('vector-rms').textContent='';
+  document.getElementById('preview-img').style.display='none';
+  document.getElementById('photo-icon').style.display='block';
+  document.getElementById('photo-status').textContent='Photo of gauge, display, or readout';
+  document.getElementById('photo-status').className='photo-status';
+  document.getElementById('photo-btn').textContent='Choose Photo';
   switchTab('manual');
 }
 
-// Photo handling — extracts readings via backend (not direct Anthropic call)
-async function handlePhoto(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  const preview = document.getElementById('preview-img');
-  const icon    = document.getElementById('photo-icon');
-  const status  = document.getElementById('photo-status');
-  const btn     = document.getElementById('photo-btn');
-
-  preview.src = URL.createObjectURL(file);
-  preview.style.display = 'block';
-  icon.style.display    = 'none';
-  status.className      = 'photo-status';
-  status.textContent    = 'Reading gauge...';
-  btn.textContent       = 'Reading...';
-
-  try {
-    const b64 = await toBase64(file);
-
-    // FIX: photo extraction goes through backend /extract-photo endpoint
-    // NOT directly to Anthropic API (would expose API pathway + fail in prod)
-    const res = await fetch(API + '/extract-photo', {
-      method: 'POST',
-      headers: apiHeaders(),
-      body: JSON.stringify({ image_b64: b64, media_type: file.type }),
-    });
-
-    if (!res.ok) throw new Error('Extraction failed');
-    const extracted = await res.json();
-
-    if (extracted && (extracted.rms_velocity || extracted.shaft_rpm)) {
-      if (extracted.rms_velocity)  document.getElementById('rms').value         = extracted.rms_velocity;
-      if (extracted.shaft_rpm)     document.getElementById('shaft-rpm').value   = extracted.shaft_rpm;
-      if (extracted.bearing_temp_c) {
-        document.getElementById('bearing-temp').value = extracted.bearing_temp_c;
-        tempChanged(document.getElementById('bearing-temp'));
-      }
-      if (extracted.vib_horizontal) document.getElementById('vib-h').value = extracted.vib_horizontal;
-      if (extracted.vib_vertical)   document.getElementById('vib-v').value = extracted.vib_vertical;
-      if (extracted.vib_axial)      document.getElementById('vib-a').value = extracted.vib_axial;
+async function handlePhoto(input){
+  const file=input.files[0];if(!file)return;
+  const preview=document.getElementById('preview-img'),icon=document.getElementById('photo-icon'),status=document.getElementById('photo-status'),btn=document.getElementById('photo-btn');
+  preview.src=URL.createObjectURL(file);preview.style.display='block';icon.style.display='none';
+  status.className='photo-status';status.textContent='Reading gauge...';btn.textContent='Reading...';
+  try{
+    const b64=await toBase64(file);
+    const res=await fetch(API+'/extract-photo',{method:'POST',headers:apiHeaders(),body:JSON.stringify({image_b64:b64,media_type:file.type})});
+    if(!res.ok)throw new Error('Extraction failed');
+    const extracted=await res.json();
+    if(extracted&&(extracted.rms_velocity||extracted.shaft_rpm)){
+      if(extracted.rms_velocity)document.getElementById('rms').value=extracted.rms_velocity;
+      if(extracted.shaft_rpm)document.getElementById('shaft-rpm').value=extracted.shaft_rpm;
+      if(extracted.bearing_temp_c){document.getElementById('bearing-temp').value=extracted.bearing_temp_c;tempChanged(document.getElementById('bearing-temp'));}
+      if(extracted.vib_horizontal)document.getElementById('vib-h').value=extracted.vib_horizontal;
+      if(extracted.vib_vertical)document.getElementById('vib-v').value=extracted.vib_vertical;
+      if(extracted.vib_axial)document.getElementById('vib-a').value=extracted.vib_axial;
       updateVector();
-      status.className  = 'photo-status ok';
-      status.textContent = '✓ Readings extracted' +
-        (extracted.asset_description ? ' — ' + extracted.asset_description : '');
+      status.className='photo-status ok';
+      status.textContent='✓ Readings extracted'+(extracted.asset_description?' — '+extracted.asset_description:'');
       switchTab('manual');
-    } else {
-      status.className  = 'photo-status err';
-      status.textContent = 'Could not read numbers — enter manually';
-    }
-  } catch(e) {
-    status.className  = 'photo-status err';
-    status.textContent = 'Photo read failed — enter readings manually';
-  }
-  btn.textContent = 'Choose Different';
+    }else{status.className='photo-status err';status.textContent='Could not read numbers — enter manually';}
+  }catch(e){status.className='photo-status err';status.textContent='Photo read failed — enter manually';}
+  btn.textContent='Choose Different';
 }
-
-function toBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload  = () => res(r.result.split(',')[1]);
-    r.onerror = () => rej(new Error('Read failed'));
-    r.readAsDataURL(file);
-  });
-}
+function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});}
 </script>
 </body>
 </html>
