@@ -59,7 +59,7 @@ input.crit{border-color:var(--red)}
 
 /* DECISION CARD — the money card */
 .decision-card{border-radius:12px;padding:22px;margin-bottom:14px;border-left:5px solid}
-.dc-asset{font-size:11px;letter-spacing:.12em;margin-bottom:12px;opacity:.7}
+.dc-asset{font-size:11px;letter-spacing:.12em;margin-bottom:12px;opacity:.7;white-space:pre-line}
 .dc-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .dc-stage{font-size:32px;font-weight:900;letter-spacing:.06em}
 .dc-health{text-align:right}
@@ -251,6 +251,20 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 </select></div>
 <div class="field"><label>Asset ID <span>(optional — enables trend tracking)</span></label>
 <input type="text" id="asset-id" placeholder="e.g. pump-bay3-01"></div>
+<div class="field"><label>Site / Location <span>(optional)</span></label>
+<input type="text" id="location" placeholder="e.g. Bay 3, Building A"></div>
+<div class="field"><label>Technician <span>(optional)</span></label>
+<input type="text" id="operator" placeholder="Your name"></div>
+<div class="field"><label>Field Notes <span>(optional — noise, smell, visual)</span></label>
+<input type="text" id="field-notes" placeholder="e.g. Grinding noise, oil leak near seal"></div>
+<div class="field"><label>Load Condition <span>(optional)</span></label>
+<select id="load-condition">
+<option value="">— Select if known —</option>
+<option value="idle">Idle / No Load</option>
+<option value="partial">Partial Load (25–75%)</option>
+<option value="full">Full Load (75–100%)</option>
+<option value="overload">Overload (&gt;100%)</option>
+</select></div>
 <div class="field"><label>RMS Velocity (mm/s) <span>* required if no XYZ</span></label>
 <input type="number" step="0.01" id="rms" placeholder="e.g. 4.2" class="big"></div>
 <div class="field"><label>Bearing Temperature (°C) <span>(optional)</span></label>
@@ -278,6 +292,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
   <!-- DECISION CARD — what a manager sees first -->
   <div class="decision-card" id="decision-card">
     <div class="dc-asset" id="dc-asset"></div>
+    <div class="dc-specs" id="dc-specs" style="font-size:11px;color:#777;margin-bottom:12px;line-height:1.8"></div>
     <div class="dc-status-row">
       <div class="dc-stage" id="dc-stage"></div>
       <div class="dc-health">
@@ -307,7 +322,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
       <div class="key-metric">
         <div class="km-label">POTENTIAL SAVINGS</div>
         <div class="km-value" id="km-savings"></div>
-        <div class="km-sub">vs emergency repair</div>
+        <div class="km-sub" id="km-savings-sub">vs emergency repair</div>
       </div>
     </div>
 
@@ -379,6 +394,12 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     </div>
   </div>
 
+  <!-- Local scan history -->
+  <div class="card" id="history-card" style="display:none">
+    <div class="card-title">SCAN HISTORY — <span id="history-asset-label"></span></div>
+    <div id="history-content"></div>
+  </div>
+
   <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
   <button class="reset-btn" onclick="resetForm()">← NEW DIAGNOSTIC</button>
 </div>
@@ -386,8 +407,68 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 <footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY</footer>
 
 <script>
+console.log('EarlyEdge diagnostic loaded — v2.5');
 const API='https://earlyedge-api.onrender.com';
 const API_KEY='';
+// ── LOCAL SCAN HISTORY ──
+// Stores last 30 scans per Asset ID in localStorage
+const HISTORY_KEY = 'earlyedge_history';
+
+function getHistory(assetId) {
+  if(!assetId) return [];
+  try {
+    const all = JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');
+    return all[assetId] || [];
+  } catch { return []; }
+}
+
+function saveToHistory(assetId, data, extra) {
+  if(!assetId) return;
+  try {
+    const all = JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');
+    if(!all[assetId]) all[assetId] = [];
+    all[assetId].push({
+      ts: new Date().toISOString(),
+      stage: data.stage,
+      vdi: data.vdi_score,
+      rms: extra.effectiveRms,
+      temp: extra.bearingTemp,
+      confidence: data.confidence,
+    });
+    // Keep last 30
+    if(all[assetId].length > 30) all[assetId] = all[assetId].slice(-30);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(all));
+  } catch(e) { console.warn('History save failed:', e); }
+}
+
+function getTrend(history) {
+  if(history.length < 2) return null;
+  const recent = history.slice(-5);
+  const first = recent[0].vdi;
+  const last = recent[recent.length-1].vdi;
+  const delta = last - first;
+  if(delta > 3) return { dir: 'rising', delta: delta.toFixed(1) };
+  if(delta < -3) return { dir: 'falling', delta: Math.abs(delta).toFixed(1) };
+  return { dir: 'stable', delta: Math.abs(delta).toFixed(1) };
+}
+
+function renderSparkline(history, color) {
+  if(history.length < 2) return '';
+  const vals = history.slice(-10).map(h => h.vdi);
+  const min = Math.min(...vals);
+  const max = Math.max(...vals, min + 1);
+  const w = 80, h = 28;
+  const pts = vals.map((v, i) => {
+    const x = (i / (vals.length - 1)) * w;
+    const y = h - ((v - min) / (max - min)) * h;
+    return x.toFixed(1)+','+y.toFixed(1);
+  }).join(' ');
+  return '<svg width="'+w+'" height="'+h+'" style="vertical-align:middle;margin-left:8px">' +
+    '<polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linejoin="round"/>' +
+    '<circle cx="'+((vals.length-1)/(vals.length-1)*w).toFixed(1)+'" cy="'+(h-((vals[vals.length-1]-min)/(max-min))*h).toFixed(1)+'" r="2.5" fill="'+color+'"/>' +
+    '</svg>';
+}
+
 function apiHeaders(){const h={'Content-Type':'application/json'};if(API_KEY)h['x-api-key']=API_KEY;return h;}
 
 const ASSET_MAP={
@@ -519,11 +600,19 @@ async function runDiagnostic(){
   const vanes=parseInt(document.getElementById('vane-count').value);if(vanes)body.vane_count=vanes;
   const bt=parseFloat(document.getElementById('bearing-temp').value);
   if(!isNaN(bt))body.temperature_c=bt;
+  // Field context (stored locally for report, not sent to API)
+  const fieldCtx={
+    location:document.getElementById('location').value.trim(),
+    operator:document.getElementById('operator').value.trim(),
+    notes:document.getElementById('field-notes').value.trim(),
+    load:document.getElementById('load-condition').value,
+    timestamp:new Date().toLocaleString(),
+  };
   try{
     const res=await fetch(API+'/analyze',{method:'POST',headers:apiHeaders(),body:JSON.stringify(body)});
     if(!res.ok){const err=await res.json();throw new Error(err.detail||'API error');}
     const data=await res.json();
-    renderResults(data,{
+    renderResults(data,fieldCtx,{
       bearingTemp:!isNaN(bt)?bt:null,
       vibH:parseFloat(document.getElementById('vib-h').value)||null,
       vibV:parseFloat(document.getElementById('vib-v').value)||null,
@@ -537,12 +626,18 @@ async function runDiagnostic(){
   }
 }
 
-function renderResults(data,extra){
+function renderResults(data,ctx,extra){
+  const ba=document.getElementById('bearing-alert');ba.classList.remove('show');ba.textContent='';
+  ['xyz-card','cost-card','runway-card','history-card'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('accel-badge').style.display='none';
+  document.getElementById('km-savings-sub').textContent='vs emergency repair';
+  // Save to local history
+  saveToHistory(extra.assetId, data, extra);
   document.getElementById('form-section').style.display='none';
   document.getElementById('results').style.display='block';
   const s=STAGE[data.stage]||STAGE.critical;
   const confidence=Math.round(data.confidence*100);
-  const healthScore=Math.round(100-data.vdi_score);
+  const healthScore=Math.max(0,Math.min(100,Math.round(100-data.vdi_score)));
   const cl=confidenceLabel(confidence);
   const cost=data.cost_impact||{};
   const dtf=data.days_to_failure||{};
@@ -551,6 +646,20 @@ function renderResults(data,extra){
   const dc=document.getElementById('decision-card');
   dc.style.background=s.bg;dc.style.borderLeftColor=s.color;
   document.getElementById('dc-asset').textContent=extra.assetLabel.toUpperCase()+(extra.assetId?' · '+extra.assetId:'');
+  // Add context line: location, operator, timestamp
+  const ctxParts=[];
+  if(ctx.location)ctxParts.push(ctx.location);
+  if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);
+  ctxParts.push(ctx.timestamp);
+  if(ctx.load)ctxParts.push('Load: '+ctx.load);
+  // Append to asset name line
+  document.getElementById('dc-asset').textContent=
+    extra.assetLabel.toUpperCase()+(extra.assetId?' · '+extra.assetId:'')+'\n'+ctxParts.join('  ·  ');
+  const specs=[];
+  if(extra.rpm)specs.push('RPM: <span style="color:#bbb">'+extra.rpm+'</span>');
+  if(extra.bearingTemp)specs.push('Temp: <span style="color:#bbb">'+extra.bearingTemp+'°C</span>');
+  specs.push('RMS: <span style="color:#bbb">'+extra.effectiveRms.toFixed(2)+' mm/s</span>');
+  document.getElementById('dc-specs').innerHTML=specs.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
   document.getElementById('dc-stage').style.color=s.color;
   document.getElementById('dc-stage').textContent=s.icon+' '+data.stage.toUpperCase();
   document.getElementById('dc-health-num').style.color=s.color;
@@ -567,7 +676,7 @@ function renderResults(data,extra){
     rws.textContent=dtf.days_lower&&dtf.days_upper?Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' day range':'estimated window';
   }else{
     rwv.style.color=s.color;
-    const stageDays={healthy:'30–42 days',watch:'7–21 days',urgent:'2–7 days',critical:'<48 hrs'};
+    const stageDays={healthy:'30–42 days',watch:'14–45 days',urgent:'3–14 days',critical:'0–72 hrs'};
     rwv.textContent=stageDays[data.stage]||'—';
     rws.textContent='stage-based estimate';
   }
@@ -593,14 +702,14 @@ function renderResults(data,extra){
   // Savings key metric
   const savEl=document.getElementById('km-savings');
   const avoided=cost.estimated_avoided_cost||0;
-  savEl.style.color=var('--green','#00C48C');
+  savEl.style.color='#00C48C';
   if(avoided>0){
     savEl.style.color='#00C48C';
     savEl.textContent='$'+avoided.toLocaleString();
   }else if(cost.fix_later_cost>0){
     savEl.style.color='#00C48C';
     savEl.textContent='$'+cost.fix_later_cost.toLocaleString();
-    document.querySelector('.key-metric:nth-child(4) .km-sub').textContent='protected exposure';
+    document.getElementById('km-savings-sub').textContent='protected exposure';
   }else{
     savEl.textContent='—';
   }
@@ -609,7 +718,6 @@ function renderResults(data,extra){
   document.getElementById('concern-text').textContent=getPrimaryConcern(data,extra);
 
   // Bearing alert
-  const ba=document.getElementById('bearing-alert');
   if(extra.bearingTemp&&extra.bearingTemp>65){
     ba.textContent='🌡 Bearing temp '+extra.bearingTemp+'°C — '+(extra.bearingTemp>80?'CRITICAL: stop and inspect immediately.':'elevated, monitor closely.');
     ba.classList.add('show');
@@ -645,16 +753,22 @@ function renderResults(data,extra){
       document.getElementById('cost-roi').textContent='';
     }else{
       document.getElementById('cost-save').textContent='Estimated avoided cost: $'+avoided.toLocaleString()+' ('+cost.savings_pct+'%)';
-      if(cost.estimated_range)document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';
+      if(cost.estimated_range){
+        document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';
+      }
       document.getElementById('cost-roi').textContent=cost.roi_window||'';
     }
-    document.getElementById('cost-basis').innerHTML=
+    let basisHtml='';
+    if(ctx.notes)basisHtml+='<strong>Field Notes:</strong> '+ctx.notes+'<br><br>';
+    basisHtml+=
       '<strong>Planned repair includes:</strong> parts, scheduled labour, planned downtime<br>'+
       '<strong>Emergency scenario includes:</strong> expedited parts, overtime labour, unplanned production loss, secondary damage risk (15%)<br>'+
-      'Estimates based on industry averages for '+extra.assetLabel+'. Calibrate asset with actual costs for site-specific accuracy.';
+      'Estimates based on industry averages for '+extra.assetLabel+'. Calibrate asset with actual costs for site-specific accuracy.<br><br>'+
+      '<em>EarlyEdge provides condition-risk guidance, not a certified failure guarantee. Confirm findings with site maintenance procedures before shutdown decisions.</em>';
+    document.getElementById('cost-basis').innerHTML=basisHtml;
   }
 
-  // XYZ
+    // XYZ
   const axes=[['Horizontal',extra.vibH,'Imbalance / Looseness'],['Vertical',extra.vibV,'Looseness / Resonance'],['Axial',extra.vibA,'Misalignment / Thrust']].filter(([,v])=>v!=null);
   if(axes.length){
     document.getElementById('xyz-card').style.display='block';
@@ -671,6 +785,57 @@ function renderResults(data,extra){
   const readings=[['VDI Score',data.vdi_score+' / 100'],['Crest Factor',data.crest_factor],['PCI',data.pci],['Entropy',data.spectral_entropy],['Confidence',confidence+'%'],['Eff. RMS',extra.effectiveRms.toFixed(3)+' mm/s']];
   if(extra.bearingTemp)readings.push(['Bearing Temp',extra.bearingTemp+'°C']);
   if(data.tpe_label&&data.tpe_label!=='not_available')readings.push(['TPE State',data.tpe_label]);
+  // Render local scan history
+  if(extra.assetId) {
+    const hist = getHistory(extra.assetId);
+    if(hist.length > 1) {
+      const hcard = document.getElementById('history-card');
+      hcard.style.display = 'block';
+      document.getElementById('history-asset-label').textContent = extra.assetId.toUpperCase();
+      const trend = getTrend(hist);
+      const prev = hist[hist.length-2];
+      const rawDelta = data.vdi_score - prev.vdi;
+      const vdiDelta = rawDelta.toFixed(1);
+      const deltaSign = rawDelta > 0 ? '+' : '';
+      const sparkSvg = renderSparkline(hist, s.color);
+      const stageColors = {healthy:'#00C48C',watch:'#F5C518',urgent:'#FF7A00',critical:'#FF3B3B'};
+      const trendColor = trend.dir==='rising' ? '#FF7A00' : trend.dir==='falling' ? '#00C48C' : '#888';
+      document.getElementById('history-content').innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">' +
+          '<div>' +
+            '<div style="font-size:11px;color:#666;margin-bottom:3px">SCANS RECORDED</div>' +
+            '<div style="font-size:22px;font-weight:700;color:'+s.color+'">'+hist.length+'</div>' +
+          '</div>' +
+          '<div style="text-align:center">' +
+            '<div style="font-size:11px;color:#666;margin-bottom:3px">VDI CHANGE</div>' +
+            '<div style="font-size:22px;font-weight:700;color:'+(rawDelta>0?'#FF7A00':'#00C48C')+'">'+deltaSign+vdiDelta+'</div>' +
+          '</div>' +
+          '<div style="text-align:right">' +
+            '<div style="font-size:11px;color:#666;margin-bottom:3px">TREND'+sparkSvg+'</div>' +
+            '<div style="font-size:13px;font-weight:700;color:'+trendColor+'">'+
+              (trend.dir==='rising'?'▲ Rising':trend.dir==='falling'?'▼ Falling':'→ Stable')+
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="font-size:10px;color:#555;margin-bottom:8px;letter-spacing:.08em">LAST 5 SCANS</div>' +
+        '<div style="display:flex;flex-direction:column;gap:6px">' +
+        hist.slice(-5).reverse().map((h,i) => {
+          const d = new Date(h.ts);
+          const timeStr = d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+          const sc = stageColors[h.stage]||'#888';
+          return '<div style="display:flex;align-items:center;justify-content:space-between;background:#0f0f0f;border-radius:6px;padding:8px 10px;border:1px solid #1e1e1e">' +
+            '<div style="font-size:11px;color:#666">'+timeStr+(i===0?' <span style="color:#555">(latest)</span>':'')+'</div>' +
+            '<div style="display:flex;gap:12px;align-items:center">' +
+              '<span style="font-size:11px;color:'+sc+';font-weight:700">'+h.stage.toUpperCase()+'</span>' +
+              '<span style="font-size:11px;color:#aaa">VDI '+h.vdi.toFixed(1)+'</span>' +
+              (h.temp?'<span style="font-size:11px;color:#777">'+h.temp+'°C</span>':'') +
+            '</div>' +
+          '</div>';
+        }).join('') +
+        '</div>';
+    }
+  }
+
   document.getElementById('readings-grid').innerHTML=readings.map(([l,v])=>`
     <div class="reading-cell">
       <div class="reading-label">${l}</div>
@@ -684,10 +849,9 @@ function resetForm(){
   document.getElementById('results').style.display='none';
   document.getElementById('run-btn').disabled=false;document.getElementById('run-btn').textContent='RUN DIAGNOSTIC';
   document.getElementById('bearing-alert').classList.remove('show');
-  ['xyz-card','cost-card','runway-card'].forEach(id=>document.getElementById(id).style.display='none');
+  ['xyz-card','cost-card','runway-card','history-card'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('accel-badge').style.display='none';
   document.getElementById('adv-section').classList.remove('open');
-  document.getElementById('adv-toggle')||document.querySelector('.adv-toggle');
   ['cost-save','cost-range','cost-roi','cost-basis','runway-range','runway-narrative','temp-hint','vector-rms'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
   document.getElementById('preview-img').style.display='none';
   document.getElementById('photo-icon').style.display='block';
@@ -695,6 +859,11 @@ function resetForm(){
   document.getElementById('photo-status').className='photo-status';
   document.getElementById('photo-btn').textContent='Choose Photo';
   switchTab('manual');
+  ['rms','bearing-temp','vib-h','vib-v','vib-a','shaft-rpm','vane-count','asset-id'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  // Keep location + operator between scans
+  const fn=document.getElementById('field-notes');if(fn)fn.value='';
+  document.getElementById('load-condition').value='';
+  document.getElementById('km-savings-sub').textContent='vs emergency repair';
 }
 
 async function handlePhoto(input){
@@ -716,7 +885,7 @@ async function handlePhoto(input){
       if(x.vib_axial)document.getElementById('vib-a').value=x.vib_axial;
       updateVector();
       status.className='photo-status ok';status.textContent='✓ Readings extracted'+(x.asset_description?' — '+x.asset_description:'');
-      switchTab('manual');
+      setTimeout(()=>switchTab('manual'), 1800);
     }else{status.className='photo-status err';status.textContent='Could not read numbers — enter manually';}
   }catch(e){status.className='photo-status err';status.textContent='Photo read failed — enter manually';}
   btn.textContent='Choose Different';
