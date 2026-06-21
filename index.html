@@ -7,32 +7,27 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0a0a0a;--surface:#141414;--surface2:#1a1a1a;
-  --border:#252525;--border2:#303030;
-  --text:#f0f0f0;--muted:#888;--dim:#555;
+  --bg:#090909;--surface:#131313;--surface2:#1a1a1a;
+  --border:#222;--border2:#2e2e2e;
+  --text:#f2f2f2;--muted:#777;--dim:#444;
   --green:#00C48C;--yellow:#F5C518;--orange:#FF7A00;--red:#FF3B3B;
   --font:'Courier New',monospace
 }
 body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;max-width:480px;margin:0 auto;-webkit-font-smoothing:antialiased}
-
-/* HEADER */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 18px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between}
 .logo{font-size:17px;font-weight:700;letter-spacing:.1em;color:#fff}
 .logo-sub{font-size:9px;color:var(--muted);letter-spacing:.14em;margin-top:2px}
 .live-badge{font-size:9px;color:var(--green);letter-spacing:.1em;border:1px solid rgba(0,196,140,.3);border-radius:4px;padding:4px 9px}
+main{padding:16px}
 
-/* TABS */
+/* FORM */
 .tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface);border-radius:6px;padding:3px;margin-bottom:16px;border:1px solid var(--border)}
 .tab{padding:10px;background:transparent;color:var(--muted);border:1px solid transparent;border-radius:4px;font-size:12px;letter-spacing:.08em;font-family:var(--font);cursor:pointer}
 .tab.active{background:var(--surface2);color:#fff;border-color:var(--border2)}
-
-/* FORM */
-main{padding:16px}
 .field{margin-bottom:14px}
 label{display:block;font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:7px;text-transform:uppercase}
 label span{color:var(--dim);text-transform:none;margin-left:5px;font-size:10px}
 input,select{width:100%;background:var(--surface2);color:var(--text);border:1px solid var(--border2);border-radius:6px;padding:13px;font-size:15px;font-family:var(--font);appearance:none;outline:none}
-input:focus,select:focus{border-color:#404040}
 input.big{font-size:22px;font-weight:700}
 input.warn{border-color:var(--orange)}
 input.crit{border-color:var(--red)}
@@ -44,8 +39,6 @@ input.crit{border-color:var(--red)}
 .advanced-toggle{width:100%;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:9px;font-size:11px;font-family:var(--font);cursor:pointer;letter-spacing:.08em;margin-bottom:14px}
 .advanced-section{display:none}
 .advanced-section.open{display:block}
-
-/* PHOTO */
 .photo-zone{border:1px dashed var(--border2);border-radius:8px;padding:28px 20px;text-align:center;margin-bottom:16px;background:var(--surface)}
 .photo-icon{font-size:36px;margin-bottom:10px}
 .photo-status{font-size:12px;color:var(--muted);line-height:1.5}
@@ -53,120 +46,118 @@ input.crit{border-color:var(--red)}
 .photo-status.err{color:var(--red)}
 #preview-img{width:100%;border-radius:6px;margin-bottom:12px;max-height:180px;object-fit:contain;display:none}
 .photo-btn{margin-top:12px;background:var(--surface2);color:#ccc;border:1px solid var(--border2);border-radius:6px;padding:11px 18px;font-size:12px;font-family:var(--font);cursor:pointer}
-.photo-note{font-size:10px;color:var(--dim);margin-top:8px;line-height:1.5}
-
-/* BUTTONS */
 .run-btn{width:100%;background:#fff;color:#000;border:none;border-radius:6px;padding:17px;font-size:14px;font-family:var(--font);font-weight:700;letter-spacing:.12em;cursor:pointer;margin-top:4px}
 .run-btn:disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed}
-
-/* ERROR */
 .error-box{background:#1a0000;border:1px solid #3a0000;border-radius:6px;padding:13px;color:var(--red);font-size:13px;margin-bottom:12px;display:none;line-height:1.5}
 .error-box.show{display:block}
+.temp-hint{font-size:11px;margin-top:5px}
+.temp-hint.warn{color:var(--orange)}
+.temp-hint.crit{color:var(--red)}
 
-/* RESULTS */
+/* ── RESULTS ── */
 #results{display:none}
 
-/* ASSET SUMMARY CARD */
-.asset-summary{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
-.asset-name{font-size:14px;font-weight:700;color:#fff;letter-spacing:.05em;margin-bottom:4px}
-.asset-specs{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.8}
-.asset-specs span{color:#bbb}
+/* DECISION CARD — the money card */
+.decision-card{border-radius:12px;padding:22px;margin-bottom:14px;border-left:5px solid}
+.dc-asset{font-size:11px;letter-spacing:.12em;margin-bottom:12px;opacity:.7}
+.dc-status-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.dc-stage{font-size:32px;font-weight:900;letter-spacing:.06em}
+.dc-health{text-align:right}
+.dc-health-num{font-size:28px;font-weight:700;display:block}
+.dc-health-label{font-size:10px;opacity:.6;letter-spacing:.1em}
+.dc-bar-track{background:rgba(0,0,0,0.35);border-radius:3px;height:6px;margin-bottom:16px}
+.dc-bar-fill{height:100%;border-radius:3px;transition:width .7s}
 
-/* STAGE BANNER */
-.stage-banner{border-left:4px solid;border-radius:8px;padding:18px 16px;margin-bottom:4px}
-.stage-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-.stage-label{font-size:28px;font-weight:900;letter-spacing:.06em}
-.stage-confidence{font-size:12px;color:var(--muted);text-align:right}
-.stage-confidence-val{font-size:18px;font-weight:700;display:block}
-.vdi-bar-track{background:rgba(0,0,0,0.4);border-radius:3px;height:5px;margin-bottom:10px}
-.vdi-bar-fill{height:100%;border-radius:3px;transition:width .6s}
-.stage-message{font-size:14px;color:#ddd;line-height:1.6}
+/* KEY METRICS ROW */
+.key-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.key-metric{background:rgba(0,0,0,0.25);border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.06)}
+.km-label{font-size:10px;opacity:.6;letter-spacing:.1em;margin-bottom:5px}
+.km-value{font-size:20px;font-weight:700}
+.km-sub{font-size:10px;opacity:.55;margin-top:3px}
 
-/* PRIMARY FAULT */
-.primary-fault{background:rgba(0,0,0,0.3);border-radius:6px;padding:12px 14px;margin-top:12px;font-size:13px}
-.primary-fault-label{font-size:10px;color:var(--muted);letter-spacing:.1em;margin-bottom:4px}
-.primary-fault-val{color:#fff;font-weight:700}
+/* PRIMARY CONCERN */
+.concern-card{border-radius:8px;padding:14px 16px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2)}
+.concern-label{font-size:10px;letter-spacing:.12em;opacity:.6;margin-bottom:6px}
+.concern-text{font-size:14px;font-weight:700;line-height:1.5}
 
-/* PROGRESSION CARD */
-.progression-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
-.prog-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:14px}
-.prog-main{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
-.prog-days{font-size:44px;font-weight:700}
-.prog-unit{font-size:14px;color:var(--muted)}
-.prog-range{font-size:11px;color:var(--dim)}
-.prog-narrative{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
-.trend-row{display:flex;align-items:center;gap:8px;font-size:12px}
-.trend-badge{padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.08em}
-.trend-rising{background:rgba(255,122,0,0.15);color:var(--orange);border:1px solid rgba(255,122,0,0.3)}
-.trend-stable{background:rgba(0,196,140,0.1);color:var(--green);border:1px solid rgba(0,196,140,0.2)}
-.accel-badge{background:rgba(255,59,59,0.15);color:var(--red);border:1px solid rgba(255,59,59,0.3);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:700}
-
-/* BEARING ALERT */
-.bearing-alert{background:#1a0a00;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--orange);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--orange);line-height:1.5;display:none}
-.bearing-alert.show{display:block}
+/* RUNWAY CARD */
+.runway-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.runway-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:12px}
+.runway-main{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
+.runway-days{font-size:44px;font-weight:700}
+.runway-unit{font-size:14px;color:var(--muted)}
+.runway-range{font-size:11px;color:var(--dim)}
+.runway-narrative{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px}
+.runway-badges{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:5px 10px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:.06em}
+.badge-rising{background:rgba(255,122,0,.15);color:var(--orange);border:1px solid rgba(255,122,0,.3)}
+.badge-stable{background:rgba(0,196,140,.1);color:var(--green);border:1px solid rgba(0,196,140,.2)}
+.badge-accel{background:rgba(255,59,59,.15);color:var(--red);border:1px solid rgba(255,59,59,.3)}
+.badge-nodata{background:rgba(255,255,255,.05);color:var(--muted);border:1px solid var(--border)}
 
 /* ACTION CARD */
 .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
 .card-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:10px}
-.action-text{font-size:14px;color:#e0e0e0;line-height:1.8}
+.action-text{font-size:14px;color:#e8e8e8;line-height:1.8}
 .next-check{font-size:12px;color:var(--muted);margin-top:10px}
-.next-check span{color:#bbb;font-weight:700}
-
-/* XYZ */
-.axis-row{margin-bottom:12px}
-.axis-header{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
-.axis-name{color:#aaa}
-.axis-val{color:#e0e0e0;font-weight:700}
-.axis-bar-track{background:#0d0d0d;border-radius:3px;height:5px}
-.axis-bar-fill{height:100%;border-radius:3px}
-.axis-fault{font-size:10px;color:var(--dim);margin-top:3px}
+.next-check span{color:#ccc;font-weight:700}
 
 /* COST */
 .cost-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 .cost-cell{border-radius:8px;padding:14px}
 .cost-cell.now{background:#071a0f;border:1px solid #0d3020}
 .cost-cell.later{background:#1a0909;border:1px solid #300d0d}
-.cost-cell-label{font-size:10px;color:var(--muted);margin-bottom:5px;letter-spacing:.08em}
-.cost-cell-sublabel{font-size:9px;color:var(--dim);margin-bottom:6px}
+.cost-cell-label{font-size:10px;color:var(--muted);margin-bottom:3px;letter-spacing:.06em}
+.cost-cell-sub{font-size:9px;color:var(--dim);margin-bottom:7px;line-height:1.4}
 .cost-cell-value{font-size:24px;font-weight:700}
 .cost-cell.now .cost-cell-value{color:var(--green)}
 .cost-cell.later .cost-cell-value{color:var(--red)}
 .cost-save{background:#071a0f;border:1px solid #0d3020;border-radius:8px;padding:13px;font-size:13px;color:var(--green);font-weight:700;margin-bottom:8px}
 .cost-range{font-size:11px;color:var(--dim);margin-bottom:6px}
 .cost-roi{font-size:11px;color:var(--muted);line-height:1.5}
+.cost-basis{font-size:10px;color:var(--dim);margin-top:10px;line-height:1.7;border-top:1px solid var(--border);padding-top:10px}
 
-/* READINGS */
+/* XYZ */
+.axis-row{margin-bottom:12px}
+.axis-header{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.axis-name{color:#bbb}
+.axis-val{color:#f0f0f0;font-weight:700}
+.axis-bar-track{background:#0d0d0d;border-radius:3px;height:5px}
+.axis-bar-fill{height:100%;border-radius:3px}
+.axis-fault{font-size:10px;color:var(--dim);margin-top:3px}
+
+/* ADVANCED DIAGNOSTICS */
+.adv-toggle{width:100%;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px;font-family:var(--font);cursor:pointer;letter-spacing:.08em;margin-bottom:10px}
+.adv-section{display:none}
+.adv-section.open{display:block}
 .readings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.reading-cell{background:#0f0f0f;border-radius:6px;padding:10px;border:1px solid var(--border)}
-.reading-label{font-size:10px;color:var(--muted);margin-bottom:3px}
-.reading-sublabel{font-size:9px;color:var(--dim);margin-bottom:5px}
-.reading-value{font-size:14px;color:#e0e0e0;font-weight:700}
+.reading-cell{background:#0f0f0f;border-radius:6px;padding:11px;border:1px solid var(--border)}
+.reading-label{font-size:10px;color:var(--muted);margin-bottom:2px}
+.reading-sub{font-size:9px;color:var(--dim);margin-bottom:6px}
+.reading-value{font-size:14px;color:#e8e8e8;font-weight:700}
 
-/* BUTTONS */
 .print-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:13px;font-size:12px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:10px}
 .reset-btn{width:100%;background:transparent;color:var(--dim);border:1px solid #1a1a1a;border-radius:6px;padding:13px;font-size:11px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
+footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;text-align:center;letter-spacing:.1em}
 
-footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;text-align:center;letter-spacing:.1em}
-.temp-hint{font-size:11px;margin-top:5px}
-.temp-hint.warn{color:var(--orange)}
-.temp-hint.crit{color:var(--red)}
+.bearing-alert{background:#1a0900;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--orange);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--orange);line-height:1.5;display:none}
+.bearing-alert.show{display:block}
 
-/* PRINT */
 @media print{
   body{background:#fff;color:#000;max-width:none}
-  header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle{display:none!important}
-  .card,.stage-banner,.asset-summary,.progression-card{border-color:#999;background:#fff}
-  .stage-label,.prog-days{color:#000!important}
+  header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle,.adv-toggle{display:none!important}
+  .decision-card,.card,.runway-card{border-color:#bbb;background:#fff}
+  .dc-stage,.runway-days,.km-value{color:#000!important}
   .cost-cell.now{background:#f0fff8;border-color:#aaa}
   .cost-cell.later{background:#fff0f0;border-color:#aaa}
   .cost-cell.now .cost-cell-value{color:#006644!important}
   .cost-cell.later .cost-cell-value{color:#cc0000!important}
   .cost-save{background:#f0fff8;border-color:#aaa;color:#006644!important}
   .reading-cell{background:#f5f5f5;border-color:#ddd}
-  .reading-value,.action-text,.stage-message,.asset-specs span{color:#222!important}
-  .axis-bar-track{background:#ddd}
+  .key-metric{background:#f5f5f5;border-color:#ddd}
+  .concern-card{background:#f5f5f5;border-color:#ddd}
+  .action-text,.reading-value,.km-value{color:#111!important}
   .bearing-alert.show{background:#fff3e0;border-color:#ff9800;color:#e65100!important}
-  .trend-badge,.accel-badge{border-color:#999}
 }
 </style>
 </head>
@@ -175,163 +166,108 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;t
 <div><div class="logo">EARLYEDGE</div><div class="logo-sub">FIELD DIAGNOSTIC · v2.5</div></div>
 <div class="live-badge">● LIVE</div>
 </header>
-
 <main>
+
+<!-- FORM -->
 <div id="form-section">
 <div class="tabs">
 <button class="tab active" onclick="switchTab('manual')">⌨ Enter Readings</button>
 <button class="tab" onclick="switchTab('photo')">📷 Scan Photo</button>
 </div>
-
 <div class="photo-zone" id="photo-zone" style="display:none">
 <img id="preview-img" alt="preview">
 <div class="photo-icon" id="photo-icon">📷</div>
 <div class="photo-status" id="photo-status">Photo of gauge, display, or readout</div>
 <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
 <button class="photo-btn" onclick="document.getElementById('photo-input').click()" id="photo-btn">Choose Photo</button>
-<div class="photo-note">AI reads numbers from gauges and displays. Enter manually for best accuracy.</div>
 </div>
-
-<div class="field">
-<label>Asset Type</label>
+<div class="field"><label>Asset Type</label>
 <select id="asset-select" onchange="assetChanged(this)">
 <optgroup label="🌱 Greenhouse">
-<option value="haf_fan">HAF Fan</option>
-<option value="exhaust_fan">Exhaust Fan</option>
-<option value="circulation_pump">Circulation Pump</option>
-<option value="boiler_pump">Boiler Pump</option>
-<option value="nutrient_pump">Nutrient Pump</option>
-<option value="co2_compressor">CO2 Compressor</option>
-<option value="co2_pump">CO2 Pump</option>
-<option value="irrigation_pump">Irrigation Pump</option>
-<option value="condensate_pump">Condensate Pump</option>
-<option value="thermal_curtain_drive">Thermal Curtain Drive</option>
+<option value="haf_fan">HAF Fan</option><option value="exhaust_fan">Exhaust Fan</option>
+<option value="circulation_pump">Circulation Pump</option><option value="boiler_pump">Boiler Pump</option>
+<option value="nutrient_pump">Nutrient Pump</option><option value="co2_compressor">CO2 Compressor</option>
+<option value="co2_pump">CO2 Pump</option><option value="irrigation_pump">Irrigation Pump</option>
+<option value="condensate_pump">Condensate Pump</option><option value="thermal_curtain_drive">Thermal Curtain Drive</option>
 <option value="hvac_unit">HVAC Unit</option>
 </optgroup>
 <optgroup label="🌾 Agriculture">
-<option value="auger_motor">Auger Motor</option>
-<option value="grain_bin_fan">Grain Bin Fan</option>
-<option value="grain_dryer">Grain Dryer</option>
-<option value="irrigation_pivot_drive">Irrigation Pivot Drive</option>
-<option value="manure_pump">Manure Pump</option>
-<option value="feed_conveyor">Feed Conveyor</option>
-<option value="grain_elevator_leg_motor">Grain Elevator Leg Motor</option>
-<option value="fertilizer_pump">Fertilizer Pump</option>
-<option value="vacuum_transfer_blower">Vacuum Transfer Blower</option>
-<option value="tractor">Tractor</option>
-<option value="tractor_pto">Tractor PTO</option>
-<option value="grain_auger">Grain Auger</option>
+<option value="auger_motor">Auger Motor</option><option value="grain_bin_fan">Grain Bin Fan</option>
+<option value="grain_dryer">Grain Dryer</option><option value="irrigation_pivot_drive">Irrigation Pivot Drive</option>
+<option value="manure_pump">Manure Pump</option><option value="feed_conveyor">Feed Conveyor</option>
+<option value="grain_elevator_leg_motor">Grain Elevator Leg Motor</option><option value="fertilizer_pump">Fertilizer Pump</option>
+<option value="vacuum_transfer_blower">Vacuum Transfer Blower</option><option value="tractor">Tractor</option>
+<option value="tractor_pto">Tractor PTO</option><option value="grain_auger">Grain Auger</option>
 </optgroup>
 <optgroup label="🏗 Construction &amp; Heavy Equipment">
 <option value="skid_steer_hydraulic_pump">Skid Steer Hydraulic Pump</option>
 <option value="excavator_main_pump">Excavator Main Pump</option>
 <option value="wheel_loader_hydraulic_pump">Wheel Loader Hydraulic Pump</option>
-<option value="dozer_final_drive">Dozer Final Drive</option>
-<option value="excavator_final_drive">Excavator Final Drive</option>
-<option value="travel_motor">Travel Motor</option>
-<option value="asphalt_plant_motor">Asphalt Plant Motor</option>
+<option value="dozer_final_drive">Dozer Final Drive</option><option value="excavator_final_drive">Excavator Final Drive</option>
+<option value="travel_motor">Travel Motor</option><option value="asphalt_plant_motor">Asphalt Plant Motor</option>
 <option value="concrete_plant_mixer">Concrete Plant Mixer</option>
 <option value="crusher_bearing_assembly">Crusher Bearing Assembly</option>
-<option value="vibratory_roller_drum">Vibratory Roller Drum</option>
-<option value="hydraulic_pump">Hydraulic Pump</option>
+<option value="vibratory_roller_drum">Vibratory Roller Drum</option><option value="hydraulic_pump">Hydraulic Pump</option>
 </optgroup>
 <optgroup label="⚙️ Manufacturing">
-<option value="cnc_spindle">CNC Spindle</option>
-<option value="injection_molding_machine">Injection Molding Machine</option>
-<option value="extruder">Extruder</option>
-<option value="packaging_line_motor">Packaging Line Motor</option>
-<option value="robotic_arm_servo">Robotic Arm Servo</option>
-<option value="dust_collector_fan">Dust Collector Fan</option>
-<option value="cooling_water_pump">Cooling Water Pump</option>
-<option value="process_pump">Process Pump</option>
-<option value="blower">Blower</option>
-<option value="rotary_airlock">Rotary Airlock</option>
+<option value="cnc_spindle">CNC Spindle</option><option value="injection_molding_machine">Injection Molding Machine</option>
+<option value="extruder">Extruder</option><option value="packaging_line_motor">Packaging Line Motor</option>
+<option value="robotic_arm_servo">Robotic Arm Servo</option><option value="dust_collector_fan">Dust Collector Fan</option>
+<option value="cooling_water_pump">Cooling Water Pump</option><option value="process_pump">Process Pump</option>
+<option value="blower">Blower</option><option value="rotary_airlock">Rotary Airlock</option>
 </optgroup>
 <optgroup label="💧 Municipal &amp; Water">
-<option value="lift_station_pump">Lift Station Pump</option>
-<option value="sewage_pump">Sewage Pump</option>
-<option value="aeration_blower">Aeration Blower</option>
-<option value="clarifier_drive">Clarifier Drive</option>
-<option value="sludge_pump">Sludge Pump</option>
-<option value="chemical_feed_pump">Chemical Feed Pump</option>
-<option value="well_pump">Well Pump</option>
-<option value="raw_water_pump">Raw Water Pump</option>
+<option value="lift_station_pump">Lift Station Pump</option><option value="sewage_pump">Sewage Pump</option>
+<option value="aeration_blower">Aeration Blower</option><option value="clarifier_drive">Clarifier Drive</option>
+<option value="sludge_pump">Sludge Pump</option><option value="chemical_feed_pump">Chemical Feed Pump</option>
+<option value="well_pump">Well Pump</option><option value="raw_water_pump">Raw Water Pump</option>
 <option value="high_service_pump">High Service Pump</option>
 </optgroup>
 <optgroup label="⛏ Mining &amp; Aggregate">
-<option value="rock_crusher">Rock Crusher</option>
-<option value="screen_deck_vibrator">Screen Deck Vibrator</option>
-<option value="stacker_conveyor">Stacker Conveyor</option>
-<option value="reclaimer_conveyor">Reclaimer Conveyor</option>
-<option value="thickener_drive">Thickener Drive</option>
-<option value="slurry_pump">Slurry Pump</option>
-<option value="ball_mill">Ball Mill</option>
-<option value="sag_mill">SAG Mill</option>
+<option value="rock_crusher">Rock Crusher</option><option value="screen_deck_vibrator">Screen Deck Vibrator</option>
+<option value="stacker_conveyor">Stacker Conveyor</option><option value="reclaimer_conveyor">Reclaimer Conveyor</option>
+<option value="thickener_drive">Thickener Drive</option><option value="slurry_pump">Slurry Pump</option>
+<option value="ball_mill">Ball Mill</option><option value="sag_mill">SAG Mill</option>
 <option value="crusher_motor">Crusher Motor</option>
 </optgroup>
 <optgroup label="⚡ Generation &amp; Power">
-<option value="diesel_generator">Diesel Generator</option>
-<option value="natural_gas_generator">Natural Gas Generator</option>
-<option value="standby_generator">Standby Generator</option>
-<option value="air_compressor">Air Compressor</option>
+<option value="diesel_generator">Diesel Generator</option><option value="natural_gas_generator">Natural Gas Generator</option>
+<option value="standby_generator">Standby Generator</option><option value="air_compressor">Air Compressor</option>
 </optgroup>
 <optgroup label="🛢 Oil &amp; Gas">
-<option value="pipeline_pump">Pipeline Pump</option>
-<option value="transfer_pump">Transfer Pump</option>
-<option value="separator_pump">Separator Pump</option>
-<option value="compressor">Compressor</option>
-<option value="flare_blower">Flare Blower</option>
-<option value="cooling_fan">Cooling Fan</option>
+<option value="pipeline_pump">Pipeline Pump</option><option value="transfer_pump">Transfer Pump</option>
+<option value="separator_pump">Separator Pump</option><option value="compressor">Compressor</option>
+<option value="flare_blower">Flare Blower</option><option value="cooling_fan">Cooling Fan</option>
 <option value="hydraulic_power_unit">Hydraulic Power Unit</option>
 </optgroup>
 <optgroup label="📦 General">
-<option value="electric_motor">Electric Motor</option>
-<option value="pump">Pump</option>
-<option value="fan">Fan</option>
-<option value="gearbox">Gearbox</option>
-<option value="bearing_housing">Bearing Housing</option>
-<option value="conveyor">Conveyor</option>
-<option value="generator">Generator</option>
-<option value="turbine">Turbine</option>
-<option value="agitator_mixer">Agitator / Mixer</option>
-<option value="hydraulic_system">Hydraulic System</option>
-<option value="vacuum_pump">Vacuum Pump</option>
-<option value="other_equipment" selected>Other Equipment</option>
+<option value="electric_motor">Electric Motor</option><option value="pump">Pump</option>
+<option value="fan">Fan</option><option value="gearbox">Gearbox</option>
+<option value="bearing_housing">Bearing Housing</option><option value="conveyor">Conveyor</option>
+<option value="generator">Generator</option><option value="turbine">Turbine</option>
+<option value="agitator_mixer">Agitator / Mixer</option><option value="hydraulic_system">Hydraulic System</option>
+<option value="vacuum_pump">Vacuum Pump</option><option value="other_equipment" selected>Other Equipment</option>
 </optgroup>
-</select>
-</div>
-
-<div class="field">
-<label>Asset ID <span>(optional — enables trend tracking)</span></label>
-<input type="text" id="asset-id" placeholder="e.g. pump-bay3-01">
-</div>
-<div class="field">
-<label>RMS Velocity (mm/s) <span>* required if no XYZ</span></label>
-<input type="number" step="0.01" id="rms" placeholder="e.g. 4.2" class="big">
-</div>
-<div class="field">
-<label>Bearing Temperature (°C) <span>(optional)</span></label>
+</select></div>
+<div class="field"><label>Asset ID <span>(optional — enables trend tracking)</span></label>
+<input type="text" id="asset-id" placeholder="e.g. pump-bay3-01"></div>
+<div class="field"><label>RMS Velocity (mm/s) <span>* required if no XYZ</span></label>
+<input type="number" step="0.01" id="rms" placeholder="e.g. 4.2" class="big"></div>
+<div class="field"><label>Bearing Temperature (°C) <span>(optional)</span></label>
 <input type="number" step="0.1" id="bearing-temp" placeholder="e.g. 62" oninput="tempChanged(this)">
-<div class="temp-hint" id="temp-hint"></div>
-</div>
-<div class="field">
-<label>XYZ Vibration (mm/s) <span>(optional — improves accuracy)</span></label>
+<div class="temp-hint" id="temp-hint"></div></div>
+<div class="field"><label>XYZ Vibration (mm/s) <span>(optional)</span></label>
 <div class="grid3">
 <div><div class="axis-label">Horizontal</div><input type="number" step="0.01" placeholder="H" class="axis-input" id="vib-h" oninput="updateVector()"></div>
 <div><div class="axis-label">Vertical</div><input type="number" step="0.01" placeholder="V" class="axis-input" id="vib-v" oninput="updateVector()"></div>
 <div><div class="axis-label">Axial</div><input type="number" step="0.01" placeholder="A" class="axis-input" id="vib-a" oninput="updateVector()"></div>
-</div>
-<div class="vector-rms" id="vector-rms"></div>
-</div>
-
+</div><div class="vector-rms" id="vector-rms"></div></div>
 <button class="advanced-toggle" onclick="toggleAdvanced(this)">▼ Shaft &amp; Vane Data</button>
 <div class="advanced-section" id="advanced-section">
 <div class="grid2" style="margin-bottom:14px">
 <div class="field" style="margin-bottom:0"><label>Shaft RPM</label><input type="number" id="shaft-rpm" placeholder="1750"></div>
 <div class="field" style="margin-bottom:0"><label>Vane Count</label><input type="number" id="vane-count" placeholder="5"></div>
-</div>
-</div>
-
+</div></div>
 <div class="error-box" id="error-box"></div>
 <button class="run-btn" id="run-btn" onclick="runDiagnostic()">RUN DIAGNOSTIC</button>
 </div>
@@ -339,57 +275,72 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;t
 <!-- RESULTS -->
 <div id="results">
 
-  <!-- Asset Summary Card -->
-  <div class="asset-summary">
-    <div class="asset-name" id="r-asset-name"></div>
-    <div class="asset-specs" id="r-asset-specs"></div>
-    <!-- Stage inline -->
-    <div class="stage-banner" id="stage-banner">
-      <div class="stage-row">
-        <div class="stage-label" id="stage-label"></div>
-        <div class="stage-confidence">
-          <span class="stage-confidence-val" id="r-confidence"></span>
-          Confidence
-        </div>
+  <!-- DECISION CARD — what a manager sees first -->
+  <div class="decision-card" id="decision-card">
+    <div class="dc-asset" id="dc-asset"></div>
+    <div class="dc-status-row">
+      <div class="dc-stage" id="dc-stage"></div>
+      <div class="dc-health">
+        <span class="dc-health-num" id="dc-health-num"></span>
+        <span class="dc-health-label">MACHINE HEALTH</span>
       </div>
-      <div class="vdi-bar-track"><div class="vdi-bar-fill" id="vdi-bar"></div></div>
-      <div class="stage-message" id="stage-message"></div>
-      <div class="primary-fault" id="primary-fault" style="display:none">
-        <div class="primary-fault-label">PRIMARY FAULT INDICATOR</div>
-        <div class="primary-fault-val" id="primary-fault-val"></div>
+    </div>
+    <div class="dc-bar-track"><div class="dc-bar-fill" id="dc-bar"></div></div>
+
+    <!-- Key metrics: what managers care about -->
+    <div class="key-metrics">
+      <div class="key-metric" id="km-runway">
+        <div class="km-label">ESTIMATED RUNWAY</div>
+        <div class="km-value" id="km-runway-val">—</div>
+        <div class="km-sub" id="km-runway-sub"></div>
       </div>
+      <div class="key-metric">
+        <div class="km-label">DATA QUALITY</div>
+        <div class="km-value" id="km-confidence"></div>
+        <div class="km-sub" id="km-confidence-sub"></div>
+      </div>
+      <div class="key-metric">
+        <div class="km-label">TREND</div>
+        <div class="km-value" id="km-trend"></div>
+        <div class="km-sub" id="km-trend-sub"></div>
+      </div>
+      <div class="key-metric">
+        <div class="km-label">POTENTIAL SAVINGS</div>
+        <div class="km-value" id="km-savings"></div>
+        <div class="km-sub">vs emergency repair</div>
+      </div>
+    </div>
+
+    <!-- Primary concern -->
+    <div class="concern-card" id="concern-card">
+      <div class="concern-label">PRIMARY CONCERN</div>
+      <div class="concern-text" id="concern-text"></div>
     </div>
   </div>
 
   <!-- Bearing alert -->
   <div class="bearing-alert" id="bearing-alert"></div>
 
-  <!-- Progression Card -->
-  <div class="progression-card" id="progression-card">
-    <div class="prog-title">ESTIMATED PROGRESSION WINDOW</div>
-    <div class="prog-main">
-      <span class="prog-days" id="prog-days"></span>
-      <span class="prog-unit">days</span>
-      <span class="prog-range" id="prog-range"></span>
-    </div>
-    <div class="prog-narrative" id="prog-narrative"></div>
-    <div class="trend-row">
-      <span class="trend-badge" id="trend-badge"></span>
-      <span class="accel-badge" id="accel-badge" style="display:none">⚡ Accelerating</span>
-    </div>
-  </div>
-
-  <!-- What to do -->
+  <!-- Recommended Action -->
   <div class="card">
-    <div class="card-title">WHAT TO DO</div>
+    <div class="card-title">RECOMMENDED ACTION</div>
     <div class="action-text" id="action-text"></div>
     <div class="next-check" id="next-check"></div>
   </div>
 
-  <!-- XYZ -->
-  <div class="card" id="xyz-card" style="display:none">
-    <div class="card-title">VIBRATION AXES</div>
-    <div id="xyz-rows"></div>
+  <!-- Runway detail -->
+  <div class="runway-card" id="runway-card" style="display:none">
+    <div class="runway-title">ESTIMATED TIME TO CRITICAL THRESHOLD</div>
+    <div class="runway-main">
+      <span class="runway-days" id="runway-days"></span>
+      <span class="runway-unit">days</span>
+      <span class="runway-range" id="runway-range"></span>
+    </div>
+    <div class="runway-narrative" id="runway-narrative"></div>
+    <div class="runway-badges">
+      <span class="badge" id="trend-badge"></span>
+      <span class="badge badge-accel" id="accel-badge" style="display:none">⚡ Accelerating</span>
+    </div>
   </div>
 
   <!-- Cost -->
@@ -398,24 +349,34 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;t
     <div class="cost-grid">
       <div class="cost-cell now">
         <div class="cost-cell-label">FIX NOW</div>
-        <div class="cost-cell-sublabel">Planned repair</div>
+        <div class="cost-cell-sub">Planned repair,<br>scheduled downtime</div>
         <div class="cost-cell-value" id="cost-now"></div>
       </div>
       <div class="cost-cell later">
         <div class="cost-cell-label">FIX LATER</div>
-        <div class="cost-cell-sublabel" id="cost-later-label">Emergency event</div>
+        <div class="cost-cell-sub" id="cost-later-sub">Emergency breakdown,<br>unplanned downtime</div>
         <div class="cost-cell-value" id="cost-later"></div>
       </div>
     </div>
     <div class="cost-save" id="cost-save"></div>
     <div class="cost-range" id="cost-range"></div>
     <div class="cost-roi" id="cost-roi"></div>
+    <div class="cost-basis" id="cost-basis"></div>
   </div>
 
-  <!-- Raw Readings -->
-  <div class="card">
-    <div class="card-title">DIAGNOSTIC READINGS</div>
-    <div class="readings-grid" id="readings-grid"></div>
+  <!-- XYZ -->
+  <div class="card" id="xyz-card" style="display:none">
+    <div class="card-title">VIBRATION AXES</div>
+    <div id="xyz-rows"></div>
+  </div>
+
+  <!-- Advanced diagnostics (hidden by default) -->
+  <button class="adv-toggle" onclick="toggleAdv(this)">▼ Advanced Diagnostics</button>
+  <div class="adv-section" id="adv-section">
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-title">RAW READINGS</div>
+      <div class="readings-grid" id="readings-grid"></div>
+    </div>
   </div>
 
   <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
@@ -425,11 +386,11 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#2a2a2a;t
 <footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY</footer>
 
 <script>
-const API = 'https://earlyedge-api.onrender.com';
-const API_KEY = '';
+const API='https://earlyedge-api.onrender.com';
+const API_KEY='';
 function apiHeaders(){const h={'Content-Type':'application/json'};if(API_KEY)h['x-api-key']=API_KEY;return h;}
 
-const ASSET_TYPE_MAP = {
+const ASSET_MAP={
   haf_fan:'haf_fan',exhaust_fan:'exhaust_fan',circulation_pump:'circulation_pump',
   boiler_pump:'boiler_pump',nutrient_pump:'nutrient_pump',co2_compressor:'co2_compressor',
   co2_pump:'co2_pump',irrigation_pump:'irrigation_pump',condensate_pump:'condensate_pump',
@@ -467,59 +428,73 @@ const ASSET_TYPE_MAP = {
   vacuum_pump:'vacuum_pump',other_equipment:'other_equipment',
 };
 
-// Updated next-check intervals matching field expectations
-const NEXT_CHECK = {
-  healthy: '30–42 days',
-  watch:   '7–14 days',
-  urgent:  '1–3 days',
-  critical:'Immediate'
+const STAGE={
+  healthy:{color:'#00C48C',bg:'#021509',icon:'✓'},
+  watch:{color:'#F5C518',bg:'#1a1300',icon:'⚠'},
+  urgent:{color:'#FF7A00',bg:'#1a0800',icon:'!'},
+  critical:{color:'#FF3B3B',bg:'#190000',icon:'✕'},
 };
 
-const STAGE = {
-  healthy: {color:'#00C48C',bg:'#021a0e',icon:'✓'},
-  watch:   {color:'#F5C518',bg:'#1a1400',icon:'⚠'},
-  urgent:  {color:'#FF7A00',bg:'#1a0900',icon:'!'},
-  critical:{color:'#FF3B3B',bg:'#1a0000',icon:'✕'},
+// Confidence to human label
+function confidenceLabel(pct){
+  if(pct>=85)return{label:'High',sub:'Strong signal'};
+  if(pct>=70)return{label:'Good',sub:'Reliable result'};
+  if(pct>=55)return{label:'Moderate',sub:'Add asset ID for better accuracy'};
+  return{label:'Low',sub:'Calibrate asset for better accuracy'};
+}
+
+// Next check per stage
+const NEXT_CHECK={
+  healthy:'Every 30–42 days',
+  watch:'Within 7–14 days',
+  urgent:'Within 1–3 days',
+  critical:'Immediately'
 };
 
-// Plain-English reading labels
-const READING_META = {
-  'VDI Score':    'Overall Health Score',
-  'Crest Factor': 'Impact / Shock Indicator',
-  'PCI':          'Pattern Instability',
-  'Entropy':      'Signal Disorder',
-  'Confidence':   'Result Confidence',
-  'Eff. RMS':     'Vibration Intensity',
-  'Bearing Temp': 'Bearing Temperature',
-  'TPE State':    'Waveform Analysis',
-};
+// Primary concern detection
+function getPrimaryConcern(data,extra){
+  if(extra.bearingTemp&&extra.bearingTemp>80)return'Bearing temperature critical ('+extra.bearingTemp+'°C) — thermal failure risk';
+  if(extra.bearingTemp&&extra.bearingTemp>65)return'Bearing temperature elevated ('+extra.bearingTemp+'°C) — inspect lubrication';
+  if(extra.vibA&&extra.vibA>extra.vibH&&extra.vibA>extra.vibV&&extra.vibA>3)return'Axial vibration dominant — misalignment or thrust bearing developing';
+  if(extra.vibH&&extra.vibH>extra.vibV&&extra.vibH>3)return'Horizontal vibration dominant — imbalance or looseness detected';
+  if(data.crest_factor>4.5)return'High impact events detected — possible bearing spalling or pitting';
+  if(data.crest_factor>3.5)return'Elevated impact signature — early bearing wear or looseness';
+  if(data.pci<0.5)return'Low signal coherence — irregular vibration pattern developing';
+  if(data.spectral_entropy>0.65)return'High signal disorder — mechanical condition deteriorating';
+  const msgs={watch:'Early-stage mechanical deviation — trend and inspect within 14 days',urgent:'Significant fault signature — schedule inspection within 3 days',critical:'Critical mechanical condition — stop and inspect immediately'};
+  return msgs[data.stage]||'Asset operating within normal parameters';
+}
 
-let currentAssetType='other_equipment', currentAssetLabel='Other Equipment';
+let currentAssetType='other_equipment',currentAssetLabel='Other Equipment';
 
 function switchTab(t){
   document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',(i===0&&t==='manual')||(i===1&&t==='photo')));
   document.getElementById('photo-zone').style.display=t==='photo'?'block':'none';
 }
 function assetChanged(s){currentAssetType=s.value;currentAssetLabel=s.options[s.selectedIndex].text;}
-function tempChanged(input){
-  const v=parseFloat(input.value),h=document.getElementById('temp-hint');
-  input.classList.remove('warn','crit');h.textContent='';
+function tempChanged(i){
+  const v=parseFloat(i.value),h=document.getElementById('temp-hint');
+  i.classList.remove('warn','crit');h.textContent='';
   if(!isNaN(v)){
-    if(v>80){input.classList.add('crit');h.className='temp-hint crit';h.textContent='⚠ Critical — inspect bearing immediately';}
-    else if(v>65){input.classList.add('warn');h.className='temp-hint warn';h.textContent='⚠ Elevated — monitor closely';}
+    if(v>80){i.classList.add('crit');h.className='temp-hint crit';h.textContent='⚠ Critical — inspect immediately';}
+    else if(v>65){i.classList.add('warn');h.className='temp-hint warn';h.textContent='⚠ Elevated — monitor closely';}
   }
 }
 function updateVector(){
   const h=parseFloat(document.getElementById('vib-h').value)||0;
   const v=parseFloat(document.getElementById('vib-v').value)||0;
   const a=parseFloat(document.getElementById('vib-a').value)||0;
-  const el=document.getElementById('vector-rms');
-  el.textContent=(h||v||a)?'Vector RMS: '+Math.sqrt(h*h+v*v+a*a).toFixed(3)+' mm/s':'';
+  document.getElementById('vector-rms').textContent=(h||v||a)?'Vector RMS: '+Math.sqrt(h*h+v*v+a*a).toFixed(3)+' mm/s':'';
 }
 function toggleAdvanced(b){
   const s=document.getElementById('advanced-section');
   s.classList.toggle('open');
   b.textContent=s.classList.contains('open')?'▲ Shaft & Vane Data':'▼ Shaft & Vane Data';
+}
+function toggleAdv(b){
+  const s=document.getElementById('adv-section');
+  s.classList.toggle('open');
+  b.textContent=s.classList.contains('open')?'▲ Advanced Diagnostics':'▼ Advanced Diagnostics';
 }
 function getEffectiveRms(){
   const h=parseFloat(document.getElementById('vib-h').value)||0;
@@ -537,20 +512,19 @@ async function runDiagnostic(){
   if(!rms){showError('Enter RMS velocity or at least one XYZ axis reading.');return;}
   const btn=document.getElementById('run-btn');
   btn.disabled=true;btn.textContent='ANALYZING...';
-  const backendAssetType=ASSET_TYPE_MAP[currentAssetType]||'general';
-  const body={asset_type:backendAssetType,mode:'field',rms_velocity:rms};
+  const body={asset_type:ASSET_MAP[currentAssetType]||'general',mode:'field',rms_velocity:rms};
   const aid=document.getElementById('asset-id').value.trim();
   if(aid)body.asset_id=aid;
   const rpm=parseFloat(document.getElementById('shaft-rpm').value);if(rpm)body.shaft_rpm=rpm;
   const vanes=parseInt(document.getElementById('vane-count').value);if(vanes)body.vane_count=vanes;
-  const bearingTemp=parseFloat(document.getElementById('bearing-temp').value);
-  if(!isNaN(bearingTemp))body.temperature_c=bearingTemp;
+  const bt=parseFloat(document.getElementById('bearing-temp').value);
+  if(!isNaN(bt))body.temperature_c=bt;
   try{
     const res=await fetch(API+'/analyze',{method:'POST',headers:apiHeaders(),body:JSON.stringify(body)});
     if(!res.ok){const err=await res.json();throw new Error(err.detail||'API error');}
     const data=await res.json();
     renderResults(data,{
-      bearingTemp:!isNaN(bearingTemp)?bearingTemp:null,
+      bearingTemp:!isNaN(bt)?bt:null,
       vibH:parseFloat(document.getElementById('vib-h').value)||null,
       vibV:parseFloat(document.getElementById('vib-v').value)||null,
       vibA:parseFloat(document.getElementById('vib-a').value)||null,
@@ -563,49 +537,76 @@ async function runDiagnostic(){
   }
 }
 
-function detectPrimaryFault(data,extra){
-  // Determine most likely fault from axis data and readings
-  if(!extra.vibH&&!extra.vibV&&!extra.vibA)return null;
-  const h=extra.vibH||0,v=extra.vibV||0,a=extra.vibA||0;
-  const max=Math.max(h,v,a);
-  if(max===a&&a>3)return'Misalignment / Axial Thrust developing';
-  if(max===h&&h>3)return'Imbalance / Looseness detected';
-  if(max===v&&v>3)return'Resonance / Structural Looseness detected';
-  if(data.crest_factor>3.5)return'Impact events detected — possible bearing wear';
-  return null;
-}
-
 function renderResults(data,extra){
   document.getElementById('form-section').style.display='none';
   document.getElementById('results').style.display='block';
   const s=STAGE[data.stage]||STAGE.critical;
   const confidence=Math.round(data.confidence*100);
+  const healthScore=Math.round(100-data.vdi_score);
+  const cl=confidenceLabel(confidence);
+  const cost=data.cost_impact||{};
+  const dtf=data.days_to_failure||{};
 
-  // Asset summary
-  document.getElementById('r-asset-name').textContent=extra.assetLabel+(extra.assetId?' — '+extra.assetId:'');
-  const specs=[];
-  if(extra.rpm)specs.push('RPM: <span>'+extra.rpm+'</span>');
-  if(extra.bearingTemp)specs.push('Temp: <span>'+extra.bearingTemp+'°C</span>');
-  specs.push('RMS: <span>'+extra.effectiveRms.toFixed(2)+' mm/s</span>');
-  document.getElementById('r-asset-specs').innerHTML=specs.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+  // DECISION CARD
+  const dc=document.getElementById('decision-card');
+  dc.style.background=s.bg;dc.style.borderLeftColor=s.color;
+  document.getElementById('dc-asset').textContent=extra.assetLabel.toUpperCase()+(extra.assetId?' · '+extra.assetId:'');
+  document.getElementById('dc-stage').style.color=s.color;
+  document.getElementById('dc-stage').textContent=s.icon+' '+data.stage.toUpperCase();
+  document.getElementById('dc-health-num').style.color=s.color;
+  document.getElementById('dc-health-num').textContent=healthScore+'%';
+  document.getElementById('dc-bar').style.width=healthScore+'%';
+  document.getElementById('dc-bar').style.background='linear-gradient(90deg,'+s.color+','+s.color+'88)';
 
-  // Stage
-  const banner=document.getElementById('stage-banner');
-  banner.style.background=s.bg;banner.style.borderLeftColor=s.color;
-  document.getElementById('stage-label').style.color=s.color;
-  document.getElementById('stage-label').textContent=s.icon+' '+data.stage.toUpperCase();
-  document.getElementById('r-confidence').style.color=s.color;
-  document.getElementById('r-confidence').textContent=confidence+'%';
-  document.getElementById('vdi-bar').style.width=data.vdi_score+'%';
-  document.getElementById('vdi-bar').style.background='linear-gradient(90deg,#00C48C,'+s.color+')';
-  document.getElementById('stage-message').textContent=data.message;
-
-  // Primary fault
-  const fault=detectPrimaryFault(data,extra);
-  if(fault){
-    document.getElementById('primary-fault').style.display='block';
-    document.getElementById('primary-fault-val').textContent=fault;
+  // Runway key metric
+  const rwv=document.getElementById('km-runway-val');
+  const rws=document.getElementById('km-runway-sub');
+  if(dtf.status==='valid'&&dtf.days_estimate!=null){
+    rwv.style.color=s.color;
+    rwv.textContent=Math.round(dtf.days_estimate)+' days';
+    rws.textContent=dtf.days_lower&&dtf.days_upper?Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' day range':'estimated window';
+  }else{
+    rwv.style.color=s.color;
+    const stageDays={healthy:'30–42 days',watch:'7–21 days',urgent:'2–7 days',critical:'<48 hrs'};
+    rwv.textContent=stageDays[data.stage]||'—';
+    rws.textContent='stage-based estimate';
   }
+
+  // Confidence key metric
+  document.getElementById('km-confidence').style.color=s.color;
+  document.getElementById('km-confidence').textContent=cl.label;
+  document.getElementById('km-confidence-sub').textContent=cl.sub;
+
+  // Trend key metric
+  const trendEl=document.getElementById('km-trend');
+  const trendSub=document.getElementById('km-trend-sub');
+  if(dtf.status==='valid'&&dtf.trend_direction){
+    trendEl.style.color=dtf.trend_direction==='rising'?'#FF7A00':'#00C48C';
+    trendEl.textContent=dtf.trend_direction==='rising'?'▲ Rising':'→ Stable';
+    trendSub.textContent=dtf.acceleration_detected?'Rate accelerating':'Steady progression';
+  }else{
+    trendEl.style.color=s.color;
+    trendEl.textContent=data.stage==='healthy'?'✓ Normal':'⚠ Monitor';
+    trendSub.textContent='Add asset ID for trend';
+  }
+
+  // Savings key metric
+  const savEl=document.getElementById('km-savings');
+  const avoided=cost.estimated_avoided_cost||0;
+  savEl.style.color=var('--green','#00C48C');
+  if(avoided>0){
+    savEl.style.color='#00C48C';
+    savEl.textContent='$'+avoided.toLocaleString();
+  }else if(cost.fix_later_cost>0){
+    savEl.style.color='#00C48C';
+    savEl.textContent='$'+cost.fix_later_cost.toLocaleString();
+    document.querySelector('.key-metric:nth-child(4) .km-sub').textContent='protected exposure';
+  }else{
+    savEl.textContent='—';
+  }
+
+  // Primary concern
+  document.getElementById('concern-text').textContent=getPrimaryConcern(data,extra);
 
   // Bearing alert
   const ba=document.getElementById('bearing-alert');
@@ -614,90 +615,66 @@ function renderResults(data,extra){
     ba.classList.add('show');
   }
 
-  // Progression card
-  const dtf=data.days_to_failure;
-  const pc=document.getElementById('progression-card');
-  if(dtf&&dtf.status==='valid'&&dtf.days_estimate!==null&&dtf.days_estimate!==undefined){
-    document.getElementById('prog-days').style.color=s.color;
-    document.getElementById('prog-days').textContent=Math.round(dtf.days_estimate);
-    if(dtf.days_lower!=null&&dtf.days_upper!=null){
-      document.getElementById('prog-range').textContent='('+Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' day range)';
-    }
-    document.getElementById('prog-narrative').textContent=dtf.confidence_narrative||'';
-    const tb=document.getElementById('trend-badge');
-    if(dtf.trend_direction==='rising'){
-      tb.textContent='▲ Rising';tb.className='trend-badge trend-rising';
-    }else{
-      tb.textContent='→ Stable / Improving';tb.className='trend-badge trend-stable';
-    }
-    if(dtf.acceleration_detected){
-      document.getElementById('accel-badge').style.display='inline-block';
-    }
-  }else{
-    // Show static progression guidance based on stage
-    const stageDays={healthy:'30–42',watch:'7–21',urgent:'1–5',critical:'0–2'};
-    document.getElementById('prog-days').style.color=s.color;
-    document.getElementById('prog-days').textContent=data.stage==='critical'?'0':stageDays[data.stage].split('–')[0];
-    document.getElementById('prog-range').textContent=data.stage!=='critical'?'('+stageDays[data.stage]+' day estimated window)':'';
-    document.getElementById('prog-narrative').textContent=
-      data.stage==='healthy'?'Asset is healthy. Continue standard monitoring to track trends over time.':
-      'Estimated window based on current stage. Add asset ID and run repeat scans to build trend history.';
-    const tb=document.getElementById('trend-badge');
-    tb.textContent='→ Insufficient history';tb.className='trend-badge trend-stable';
-  }
-
   // Action
   document.getElementById('action-text').textContent=data.recommended_action;
   document.getElementById('next-check').innerHTML='Next check: <span>'+NEXT_CHECK[data.stage]+'</span>';
 
+  // Runway detail card
+  if(dtf.status==='valid'&&dtf.days_estimate!=null){
+    document.getElementById('runway-card').style.display='block';
+    document.getElementById('runway-days').style.color=s.color;
+    document.getElementById('runway-days').textContent=Math.round(dtf.days_estimate);
+    if(dtf.days_lower!=null&&dtf.days_upper!=null)
+      document.getElementById('runway-range').textContent='('+Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+')';
+    document.getElementById('runway-narrative').textContent=dtf.confidence_narrative||'';
+    const tb=document.getElementById('trend-badge');
+    if(dtf.trend_direction==='rising'){tb.textContent='▲ Rising';tb.className='badge badge-rising';}
+    else{tb.textContent='→ Stable / Improving';tb.className='badge badge-stable';}
+    if(dtf.acceleration_detected)document.getElementById('accel-badge').style.display='inline-block';
+  }
+
+  // Cost card
+  if(cost.fix_later_cost>0){
+    document.getElementById('cost-card').style.display='block';
+    const isHealthy=cost.fix_now_cost===0;
+    document.getElementById('cost-now').textContent=isHealthy?'—':'$'+cost.fix_now_cost.toLocaleString();
+    document.getElementById('cost-later').textContent='$'+cost.fix_later_cost.toLocaleString();
+    if(isHealthy){
+      document.getElementById('cost-save').textContent='Protected exposure: $'+cost.fix_later_cost.toLocaleString()+' CAD';
+      document.getElementById('cost-range').textContent='No repair needed today. This is the financial risk you are protecting against.';
+      document.getElementById('cost-roi').textContent='';
+    }else{
+      document.getElementById('cost-save').textContent='Estimated avoided cost: $'+avoided.toLocaleString()+' ('+cost.savings_pct+'%)';
+      if(cost.estimated_range)document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';
+      document.getElementById('cost-roi').textContent=cost.roi_window||'';
+    }
+    document.getElementById('cost-basis').innerHTML=
+      '<strong>Planned repair includes:</strong> parts, scheduled labour, planned downtime<br>'+
+      '<strong>Emergency scenario includes:</strong> expedited parts, overtime labour, unplanned production loss, secondary damage risk (15%)<br>'+
+      'Estimates based on industry averages for '+extra.assetLabel+'. Calibrate asset with actual costs for site-specific accuracy.';
+  }
+
   // XYZ
-  const axes=[['Horizontal',extra.vibH,'Imbalance / Looseness'],['Vertical',extra.vibV,'Looseness / Resonance'],['Axial',extra.vibA,'Misalignment / Thrust']].filter(([,v])=>v!==null);
+  const axes=[['Horizontal',extra.vibH,'Imbalance / Looseness'],['Vertical',extra.vibV,'Looseness / Resonance'],['Axial',extra.vibA,'Misalignment / Thrust']].filter(([,v])=>v!=null);
   if(axes.length){
     document.getElementById('xyz-card').style.display='block';
     document.getElementById('xyz-rows').innerHTML=axes.map(([n,v,f])=>`
       <div class="axis-row">
         <div class="axis-header"><span class="axis-name">${n}</span><span class="axis-val">${v} mm/s</span></div>
         <div class="axis-bar-track"><div class="axis-bar-fill" style="width:${Math.min(100,(v/20)*100)}%;background:${s.color}"></div></div>
-        <div class="axis-fault">Fault indicator: ${f}</div>
+        <div class="axis-fault">Fault type: ${f}</div>
       </div>`).join('');
   }
 
-  // Cost
-  const cost=data.cost_impact;
-  if(cost&&cost.fix_later_cost>0){
-    document.getElementById('cost-card').style.display='block';
-    const isHealthy=cost.fix_now_cost===0;
-    document.getElementById('cost-now').textContent=isHealthy?'—':'$'+cost.fix_now_cost.toLocaleString();
-    document.getElementById('cost-later').textContent='$'+cost.fix_later_cost.toLocaleString();
-    const assetLabel=extra.assetLabel.replace(/ /g,' ');
-    document.getElementById('cost-later-label').textContent='Estimated '+assetLabel+' failure event';
-    if(isHealthy){
-      document.getElementById('cost-save').textContent='Protected exposure: $'+cost.fix_later_cost.toLocaleString()+' CAD';
-      document.getElementById('cost-range').textContent='No repair needed. This is the financial risk you are protecting against.';
-      document.getElementById('cost-roi').textContent=cost.note||'';
-    }else{
-      const avoided=cost.estimated_avoided_cost||0;
-      document.getElementById('cost-save').textContent='Estimated avoided cost: $'+avoided.toLocaleString()+' ('+cost.savings_pct+'%)';
-      if(cost.estimated_range)document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';
-      document.getElementById('cost-roi').textContent=cost.roi_window;
-    }
-  }
-
-  // Readings with plain-English labels
-  const readings=[
-    ['VDI Score',data.vdi_score+' / 100'],
-    ['Crest Factor',data.crest_factor],
-    ['PCI',data.pci],
-    ['Entropy',data.spectral_entropy],
-    ['Confidence',confidence+'%'],
-    ['Eff. RMS',extra.effectiveRms.toFixed(3)+' mm/s'],
-  ];
+  // Advanced readings
+  const RMETA={'VDI Score':'Overall degradation index','Crest Factor':'Impact / shock indicator','PCI':'Pattern instability','Entropy':'Signal disorder','Confidence':'Result confidence','Eff. RMS':'Vibration intensity','Bearing Temp':'Bearing temperature','TPE State':'Waveform analysis'};
+  const readings=[['VDI Score',data.vdi_score+' / 100'],['Crest Factor',data.crest_factor],['PCI',data.pci],['Entropy',data.spectral_entropy],['Confidence',confidence+'%'],['Eff. RMS',extra.effectiveRms.toFixed(3)+' mm/s']];
   if(extra.bearingTemp)readings.push(['Bearing Temp',extra.bearingTemp+'°C']);
   if(data.tpe_label&&data.tpe_label!=='not_available')readings.push(['TPE State',data.tpe_label]);
   document.getElementById('readings-grid').innerHTML=readings.map(([l,v])=>`
     <div class="reading-cell">
       <div class="reading-label">${l}</div>
-      <div class="reading-sublabel">${READING_META[l]||''}</div>
+      <div class="reading-sub">${RMETA[l]||''}</div>
       <div class="reading-value">${v}</div>
     </div>`).join('');
 }
@@ -705,19 +682,13 @@ function renderResults(data,extra){
 function resetForm(){
   document.getElementById('form-section').style.display='block';
   document.getElementById('results').style.display='none';
-  document.getElementById('run-btn').disabled=false;
-  document.getElementById('run-btn').textContent='RUN DIAGNOSTIC';
+  document.getElementById('run-btn').disabled=false;document.getElementById('run-btn').textContent='RUN DIAGNOSTIC';
   document.getElementById('bearing-alert').classList.remove('show');
-  document.getElementById('primary-fault').style.display='none';
-  ['xyz-card','cost-card'].forEach(id=>document.getElementById(id).style.display='none');
+  ['xyz-card','cost-card','runway-card'].forEach(id=>document.getElementById(id).style.display='none');
   document.getElementById('accel-badge').style.display='none';
-  document.getElementById('cost-save').textContent='';
-  document.getElementById('cost-range').textContent='';
-  document.getElementById('cost-roi').textContent='';
-  document.getElementById('prog-range').textContent='';
-  document.getElementById('prog-narrative').textContent='';
-  document.getElementById('temp-hint').textContent='';
-  document.getElementById('vector-rms').textContent='';
+  document.getElementById('adv-section').classList.remove('open');
+  document.getElementById('adv-toggle')||document.querySelector('.adv-toggle');
+  ['cost-save','cost-range','cost-roi','cost-basis','runway-range','runway-narrative','temp-hint','vector-rms'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
   document.getElementById('preview-img').style.display='none';
   document.getElementById('photo-icon').style.display='block';
   document.getElementById('photo-status').textContent='Photo of gauge, display, or readout';
@@ -735,23 +706,22 @@ async function handlePhoto(input){
     const b64=await toBase64(file);
     const res=await fetch(API+'/extract-photo',{method:'POST',headers:apiHeaders(),body:JSON.stringify({image_b64:b64,media_type:file.type})});
     if(!res.ok)throw new Error('Extraction failed');
-    const extracted=await res.json();
-    if(extracted&&(extracted.rms_velocity||extracted.shaft_rpm)){
-      if(extracted.rms_velocity)document.getElementById('rms').value=extracted.rms_velocity;
-      if(extracted.shaft_rpm)document.getElementById('shaft-rpm').value=extracted.shaft_rpm;
-      if(extracted.bearing_temp_c){document.getElementById('bearing-temp').value=extracted.bearing_temp_c;tempChanged(document.getElementById('bearing-temp'));}
-      if(extracted.vib_horizontal)document.getElementById('vib-h').value=extracted.vib_horizontal;
-      if(extracted.vib_vertical)document.getElementById('vib-v').value=extracted.vib_vertical;
-      if(extracted.vib_axial)document.getElementById('vib-a').value=extracted.vib_axial;
+    const x=await res.json();
+    if(x&&(x.rms_velocity||x.shaft_rpm)){
+      if(x.rms_velocity)document.getElementById('rms').value=x.rms_velocity;
+      if(x.shaft_rpm)document.getElementById('shaft-rpm').value=x.shaft_rpm;
+      if(x.bearing_temp_c){document.getElementById('bearing-temp').value=x.bearing_temp_c;tempChanged(document.getElementById('bearing-temp'));}
+      if(x.vib_horizontal)document.getElementById('vib-h').value=x.vib_horizontal;
+      if(x.vib_vertical)document.getElementById('vib-v').value=x.vib_vertical;
+      if(x.vib_axial)document.getElementById('vib-a').value=x.vib_axial;
       updateVector();
-      status.className='photo-status ok';
-      status.textContent='✓ Readings extracted'+(extracted.asset_description?' — '+extracted.asset_description:'');
+      status.className='photo-status ok';status.textContent='✓ Readings extracted'+(x.asset_description?' — '+x.asset_description:'');
       switchTab('manual');
     }else{status.className='photo-status err';status.textContent='Could not read numbers — enter manually';}
   }catch(e){status.className='photo-status err';status.textContent='Photo read failed — enter manually';}
   btn.textContent='Choose Different';
 }
-function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('Read failed'));r.readAsDataURL(file);});}
+function toBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error(''));r.readAsDataURL(file);});}
 </script>
 </body>
 </html>
