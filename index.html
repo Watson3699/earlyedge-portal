@@ -309,6 +309,8 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
   <div class="decision-card" id="decision-card">
     <div class="dc-asset" id="dc-asset"></div>
     <div class="dc-specs" id="dc-specs" style="font-size:11px;color:#777;margin-bottom:12px;line-height:1.8"></div>
+    <div id="stage-trigger" style="display:none;font-size:11px;color:#aaa;background:rgba(255,255,255,0.04);border-left:3px solid;border-color:inherit;border-radius:4px;padding:8px 10px;margin-bottom:12px;line-height:1.5"></div>
+    <div id="primary-driver-badge" style="display:none;font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 10px;border-radius:4px;margin-bottom:12px;background:rgba(255,255,255,0.06);color:#ccc;border:1px solid #2a2a2a"></div>
     <div class="dc-status-row">
       <div class="dc-stage" id="dc-stage"></div>
       <div class="dc-health">
@@ -404,7 +406,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
   </div>
 
   <div class="card" id="channel-card" style="display:none">
-    <div class="card-title">5-CHANNEL DIAGNOSTIC</div>
+    <div class="card-title" id="channel-card-title">3-CHANNEL FIELD MODE</div>
     <div class="channel-bars" id="channel-bars"></div>
     <div style="font-size:10px;color:#333;margin-top:10px;line-height:1.6" id="channel-mode-note"></div>
   </div>
@@ -428,7 +430,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 
   <div class="cta-card">
     <div class="cta-title">BUYER TRIAL — NEXT STEP</div>
-    <div class="cta-text">If this result matches your maintenance observations, AW IP Holdings can provide a controlled validation package, API trial, or licensing discussion. EarlyEdge is designed to shorten diagnostic lead time against existing maintenance workflows without exposing proprietary scoring logic.<br><br>awipholdings@gmail.com</div>
+    <div class="cta-text">If this result matches your maintenance observations:<br><br><strong style="color:#00C48C">→ Request API Trial</strong> — 30-day live integration with your CMMS or field workflow<br><strong style="color:#00C48C">→ Validation Partner Package</strong> — side-by-side comparison against your existing diagnostic process<br><strong style="color:#00C48C">→ Licensing Discussion</strong> — OEM white-label or acquisition under NDA<br><br>EarlyEdge shortens diagnostic lead time without exposing proprietary scoring logic.<br><br><strong>awipholdings@gmail.com</strong></div>
   </div>
 
   <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
@@ -516,7 +518,8 @@ function renderChannelBars(data){
     if(avail){cls=pct<33?'ch-healthy':pct<67?'ch-watch':pct<90?'ch-urgent':'ch-critical';}
     return'<div class="ch-row"><div class="ch-name">'+ch.n+'</div><div class="ch-track"><div class="ch-fill '+cls+'" style="width:'+(avail?pct:0)+'%"></div></div><div class="ch-pct">'+(avail?pct+'%':'—')+'</div></div>';
   }).join('');
-  document.getElementById('channel-mode-note').textContent=isWave?'5-channel waveform analysis active.':'Envelope Kurtosis and Timing Prediction Error require waveform CSV data. Upload CSV in the field app to activate full 5-channel analysis.';
+  document.getElementById('channel-card-title').textContent=isWave?'5-CHANNEL WAVEFORM MODE':'3-CHANNEL FIELD MODE';
+  document.getElementById('channel-mode-note').textContent=isWave?'5-channel waveform analysis active — all channels scored.':'Envelope Kurtosis and Timing Prediction Error require waveform CSV. Upload CSV to activate full 5-channel analysis.';
 }
 
 function renderSpectralDetail(data){
@@ -655,7 +658,8 @@ function renderResults(data,ctx,extra){
   const vdiVal=data.vdi!=null?data.vdi:(data.vdi_score!=null?data.vdi_score:0);
   const s=STAGE[stageKey]||STAGE.critical;
   const confidence=data.confidence!=null?(data.confidence<=1?Math.round(data.confidence*100):Math.round(data.confidence)):75;
-  const healthScore=Math.max(0,Math.min(100,Math.round(100-vdiVal)));
+  const stageHealthCaps={healthy:100,watch:82,urgent:62,critical:35};
+  const healthScore=Math.min(stageHealthCaps[stageKey]||100,Math.max(0,Math.round(100-vdiVal)));
   const cl=confidenceLabel(confidence);
   const cost=data.cost_impact||{};
   const dtf=data.days_to_failure||{};
@@ -663,6 +667,7 @@ function renderResults(data,ctx,extra){
   const banner=document.getElementById('overall-stage-banner');
   banner.style.background=s.bg;banner.style.borderColor=s.color;
   const osb=document.getElementById('osb-stage-text');osb.style.color=s.color;osb.textContent=s.icon+' '+stageKey.toUpperCase();
+  const stEl=document.getElementById('stage-trigger');if(stEl)stEl.style.borderColor=s.color;
 
   const dc=document.getElementById('decision-card');dc.style.background=s.bg;dc.style.borderLeftColor=s.color;
   const ctxParts=[];if(ctx.location)ctxParts.push(ctx.location);if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);ctxParts.push(ctx.timestamp);ctxParts.push('Report: '+reportId);if(ctx.load)ctxParts.push('Load: '+ctx.load);
@@ -690,6 +695,37 @@ function renderResults(data,ctx,extra){
   else if(cost.fix_later_cost>0){savEl.textContent='$'+cost.fix_later_cost.toLocaleString();document.getElementById('km-savings-sub').textContent='protected exposure';}
   else savEl.textContent='—';
 
+  // Fix 2: Why stage triggered
+  const triggerEl=document.getElementById('stage-trigger');
+  if(triggerEl){
+    const rmsV=extra.effectiveRms,tempV=extra.bearingTemp;
+    let why='';
+    if(stageKey==='watch'){
+      if(rmsV>4.5)why+='WATCH triggered by RMS '+rmsV.toFixed(2)+' mm/s above normal range';
+      if(tempV&&tempV>60){why+=(why?'; ':'')+'temperature borderline at '+tempV+'°C';}
+      if(!why)why='WATCH triggered by combined channel scoring';
+    }else if(stageKey==='urgent'){why='URGENT triggered by elevated fault signature across multiple channels';}
+    else if(stageKey==='critical'){why='CRITICAL condition — immediate inspection required';}
+    else{why='Asset operating within normal parameters — no fault signature detected';}
+    triggerEl.textContent=why;
+    triggerEl.style.display=why?'block':'none';
+  }
+  // Fix 4: Primary driver badge
+  const pdEl=document.getElementById('primary-driver-badge');
+  if(pdEl){
+    let driver='';
+    const cfV2=data.crest_factor||data.cf||0;
+    if(extra.effectiveRms>7.1)driver='RMS CRITICAL';
+    else if(extra.effectiveRms>4.5)driver='RMS ELEVATED';
+    else if(extra.bearingTemp&&extra.bearingTemp>80)driver='TEMP CRITICAL';
+    else if(extra.bearingTemp&&extra.bearingTemp>65)driver='TEMP ELEVATED';
+    else if(extra.vibA&&extra.vibA>extra.vibH&&extra.vibA>extra.vibV&&extra.vibA>3)driver='AXIAL DOMINANT';
+    else if(cfV2>4.5)driver='HIGH IMPACT';
+    else if(cfV2>3.5)driver='IMPACT ELEVATED';
+    else driver='MULTI-CHANNEL';
+    pdEl.textContent='PRIMARY DRIVER: '+driver;
+    pdEl.style.display='block';
+  }
   document.getElementById('concern-text').textContent=getPrimaryConcern(data,extra);
   document.getElementById('proof-drivers').innerHTML=getProofDrivers(data,extra).map(x=>'• '+x).join('<br>');
   document.getElementById('inspect-list').innerHTML=getInspectList(stageKey,extra).map(x=>'• '+x).join('<br>');
@@ -698,7 +734,16 @@ function renderResults(data,ctx,extra){
 
   const actionText=data.recommended_action||(data.risk_drivers&&data.risk_drivers.length?data.risk_drivers.join(' · '):'Monitor asset and re-scan on schedule.');
   document.getElementById('action-text').textContent=actionText;
-  document.getElementById('next-check').innerHTML='Next check: <span>'+NEXT_CHECK[stageKey]+'</span>';
+  const nextCheckEl=document.getElementById('next-check');
+  const now=new Date();
+  const scanWindows={healthy:30,watch:7,urgent:1,critical:0};
+  const scanWindowsEnd={healthy:42,watch:14,urgent:3,critical:1};
+  const dStart=scanWindows[stageKey]||7,dEnd=scanWindowsEnd[stageKey]||14;
+  const d1=new Date(now);d1.setDate(d1.getDate()+dStart);
+  const d2=new Date(now);d2.setDate(d2.getDate()+dEnd);
+  const fmt=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const windowStr=stageKey==='critical'?'Immediately':fmt(d1)+' – '+fmt(d2);
+  nextCheckEl.innerHTML='Next scan window: <span>'+windowStr+'</span>';
 
   if((dtf.status==='valid'||dtf.status==='projected')&&dtf.days_estimate!=null){
     document.getElementById('runway-card').style.display='block';
