@@ -559,7 +559,7 @@ async function runDiagnostic(){
   const btn=document.getElementById('run-btn');
   btn.disabled=true;btn.textContent='ANALYZING...';
   const body={asset_type:ASSET_MAP[currentAssetType]||'general',rms_velocity:rms};
-  const sampleRate=parseFloat(document.getElementById('sample-rate').value)||parseFloat(document.getElementById('csv-fs').value);
+  const sampleRate=parseFloat((document.getElementById('sample-rate')||{}).value)||parseFloat(document.getElementById('csv-fs').value);
   if(uploadedWaveform){
     if(!sampleRate){showError('Sample rate is required when using waveform CSV.');btn.disabled=false;btn.textContent='RUN DIAGNOSTIC';return;}
     body.waveform=uploadedWaveform;body.sample_rate_hz=sampleRate;body.mode='spectral';
