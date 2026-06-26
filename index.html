@@ -106,7 +106,6 @@ input.crit{border-color:var(--red)}
 .axis-bar-track{background:#0d0d0d;border-radius:3px;height:5px}
 .axis-bar-fill{height:100%;border-radius:3px}
 .axis-fault{font-size:10px;color:var(--dim);margin-top:3px}
-/* NEW: 5-channel bars */
 .channel-bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
 .ch-row{display:grid;grid-template-columns:125px 1fr 36px;align-items:center;gap:8px}
 .ch-name{font-size:11px;color:var(--muted)}
@@ -118,7 +117,6 @@ input.crit{border-color:var(--red)}
 .ch-critical{background:var(--red)}
 .ch-zero{background:#2a2a2a}
 .ch-pct{text-align:right;font-size:10px;color:var(--dim)}
-/* NEW: overall stage banner */
 .overall-stage-banner{border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;border:1px solid}
 .osb-label{font-size:10px;letter-spacing:.1em;opacity:.6}
 .osb-stage{font-size:16px;font-weight:900;letter-spacing:.08em}
@@ -132,12 +130,15 @@ input.crit{border-color:var(--red)}
 .reading-value{font-size:14px;color:#e8e8e8;font-weight:700}
 .print-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:13px;font-size:12px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:10px}
 .reset-btn{width:100%;background:transparent;color:var(--dim);border:1px solid #1a1a1a;border-radius:6px;padding:13px;font-size:11px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
+.cta-card{background:#0a0f0a;border:1px solid rgba(0,196,140,.2);border-left:3px solid var(--green);border-radius:10px;padding:18px;margin-bottom:14px}
+.cta-title{font-size:10px;color:var(--green);letter-spacing:.12em;margin-bottom:8px}
+.cta-text{font-size:13px;color:#ccc;line-height:1.7}
 footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;text-align:center;letter-spacing:.1em}
 .bearing-alert{background:#1a0900;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--orange);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--orange);line-height:1.5;display:none}
 .bearing-alert.show{display:block}
 @media print{
   body{background:#fff;color:#000;max-width:none}
-  header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle,.adv-toggle{display:none!important}
+  header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle,.adv-toggle,.cta-card{display:none!important}
   .decision-card,.card,.runway-card{border-color:#bbb;background:#fff}
   .dc-stage,.runway-days,.km-value{color:#000!important}
   .cost-cell.now{background:#f0fff8;border-color:#aaa}
@@ -160,6 +161,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 <div class="live-badge">● BUYER TRIAL</div>
 </header>
 <main>
+<div style="border:1px solid rgba(0,196,140,.25);background:#06120d;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:#00C48C;line-height:1.6">CONTROLLED BUYER TRIAL · Proprietary scoring hidden · API validation available under license/NDA · Front-end preview access</div>
 <div class="card" id="system-card" style="margin-bottom:14px"><div class="card-title">SYSTEM STATUS</div><div id="api-status" style="font-size:13px;color:var(--muted)">Checking API...</div><div style="font-size:10px;color:#444;margin-top:6px">Controlled evaluation portal · EarlyEdge engine output is proprietary</div></div>
 <div id="form-section">
 <div class="tabs">
@@ -292,14 +294,13 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 </div></div>
 <div class="error-box" id="error-box"></div>
 <div class="grid2" style="margin-bottom:14px">
-<button class="photo-btn" onclick="loadDemo('healthy')">Demo Healthy</button>
-<button class="photo-btn" onclick="loadDemo('urgent')">Demo Fault</button>
+<button class="photo-btn" onclick="loadDemo('healthy')">Sample Healthy Case</button>
+<button class="photo-btn" onclick="loadDemo('urgent')">Sample Fault Case</button>
 </div>
 <button class="run-btn" id="run-btn" onclick="runDiagnostic()">RUN DIAGNOSTIC</button>
 </div>
 
 <div id="results">
-  <!-- NEW: Overall Stage Banner -->
   <div class="overall-stage-banner" id="overall-stage-banner">
     <div class="osb-label">OVERALL STAGE</div>
     <div class="osb-stage" id="osb-stage-text"></div>
@@ -323,7 +324,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
         <div class="km-sub" id="km-runway-sub"></div>
       </div>
       <div class="key-metric">
-        <div class="km-label">DATA QUALITY</div>
+        <div class="km-label">VALIDATION READINESS</div>
         <div class="km-value" id="km-confidence"></div>
         <div class="km-sub" id="km-confidence-sub"></div>
       </div>
@@ -341,7 +342,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div class="concern-card">
       <div class="concern-label">PRIMARY CONCERN</div>
       <div class="concern-text" id="concern-text"></div>
-    <div style="font-size:10px;color:#444;line-height:1.5;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:10px">Condition-risk guidance only. Confirm shutdown decisions with site maintenance procedures.</div>
+      <div style="font-size:10px;color:#444;line-height:1.5;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:10px">Trial mode: outputs are condition-risk indicators for maintenance planning. Results should be confirmed against site procedures, historical records, and technician inspection before shutdown decisions.</div>
     </div>
   </div>
 
@@ -402,7 +403,6 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div id="xyz-rows"></div>
   </div>
 
-  <!-- NEW: 5-Channel Bars -->
   <div class="card" id="channel-card" style="display:none">
     <div class="card-title">5-CHANNEL DIAGNOSTIC</div>
     <div class="channel-bars" id="channel-bars"></div>
@@ -415,7 +415,6 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
       <div class="card-title">RAW READINGS</div>
       <div class="readings-grid" id="readings-grid"></div>
     </div>
-    <!-- NEW: EKS/TPE detail -->
     <div class="card" id="spectral-detail-card" style="display:none;margin-bottom:10px">
       <div class="card-title">WAVEFORM CHANNELS (EKS · TPE)</div>
       <div id="spectral-detail-body"></div>
@@ -427,16 +426,32 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div id="history-content"></div>
   </div>
 
+  <div class="cta-card">
+    <div class="cta-title">BUYER TRIAL — NEXT STEP</div>
+    <div class="cta-text">If this result matches your maintenance observations, AW IP Holdings can provide a controlled validation package, API trial, or licensing discussion. EarlyEdge is designed to shorten diagnostic lead time against existing maintenance workflows without exposing proprietary scoring logic.<br><br>awipholdings@gmail.com</div>
+  </div>
+
   <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
+  <button class="print-btn" onclick="exportTrialData()">⬇ EXPORT TRIAL DATA</button>
   <button class="reset-btn" onclick="resetForm()">← NEW DIAGNOSTIC</button>
 </div>
 </main>
-<footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY</footer>
+<footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY · CONTROLLED BUYER TRIAL · DO NOT DISTRIBUTE</footer>
 
 <script>
 const API='https://earlyedge-api.onrender.com';
 const API_KEY='';
 const HISTORY_KEY='earlyedge_history';
+const TRIAL_CODE='EARLYEDGE30';
+
+function checkTrialAccess(){
+  const saved=localStorage.getItem('earlyedge_trial_code');
+  if(saved===TRIAL_CODE)return true;
+  const code=prompt('Enter EarlyEdge buyer trial code:');
+  if(code===TRIAL_CODE){localStorage.setItem('earlyedge_trial_code',code);return true;}
+  document.body.innerHTML='<div style="padding:30px;color:white;font-family:Courier New;background:#090909;min-height:100vh"><h2 style="margin-bottom:16px;letter-spacing:.1em">EARLYEDGE BUYER TRIAL</h2><p style="color:#777;margin-bottom:8px">Access required. Contact AW IP Holdings Inc. to receive your trial code.</p><p style="color:#444;font-size:12px">awipholdings@gmail.com</p></div>';
+  return false;
+}
 
 function getHistory(id){if(!id)return[];try{const a=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');return a[id]||[];}catch{return[];}}
 function saveToHistory(id,data,extra){
@@ -467,7 +482,7 @@ function renderSparkline(history,color){
 }
 function apiHeaders(){const h={'Content-Type':'application/json'};if(API_KEY)h['x-api-key']=API_KEY;return h;}
 
-const ASSET_MAP={haf_fan:'haf_fan',exhaust_fan:'exhaust_fan',circulation_pump:'circulation_pump',boiler_pump:'boiler_pump',nutrient_pump:'nutrient_pump',co2_compressor:'co2_compressor',co2_pump:'co2_pump',irrigation_pump:'irrigation_pump',condensate_pump:'condensate_pump',thermal_curtain_drive:'thermal_curtain_drive',hvac_unit:'hvac_unit',auger_motor:'auger_motor',grain_bin_fan:'grain_bin_fan',grain_dryer:'grain_dryer',irrigation_pivot_drive:'irrigation_pivot_drive',manure_pump:'manure_pump',feed_conveyor:'feed_conveyor',grain_elevator_leg_motor:'grain_elevator_leg_motor',fertilizer_pump:'fertilizer_pump',vacuum_transfer_blower:'vacuum_transfer_blower',tractor:'tractor',tractor_pto:'tractor_pto',grain_auger:'grain_auger',skid_steer_hydraulic_pump:'skid_steer_hydraulic_pump',excavator_main_pump:'excavator_main_pump',wheel_loader_hydraulic_pump:'wheel_loader_hydraulic_pump',dozer_final_drive:'dozer_final_drive',excavator_final_drive:'excavator_final_drive',travel_motor:'travel_motor',asphalt_plant_motor:'asphalt_plant_motor',concrete_plant_mixer:'concrete_plant_mixer',crusher_bearing_assembly:'crusher_bearing_assembly',vibratory_roller_drum:'vibratory_roller_drum',hydraulic_pump:'hydraulic_pump',cnc_spindle:'cnc_spindle',injection_molding_machine:'injection_molding_machine',extruder:'extruder',packaging_line_motor:'packaging_line_motor',robotic_arm_servo:'robotic_arm_servo',dust_collector_fan:'dust_collector_fan',cooling_water_pump:'cooling_water_pump',process_pump:'process_pump',blower:'blower',rotary_airlock:'rotary_airlock',lift_station_pump:'lift_station_pump',sewage_pump:'sewage_pump',aeration_blower:'aeration_blower',clarifier_drive:'clarifier_drive',sludge_pump:'sludge_pump',chemical_feed_pump:'chemical_feed_pump',well_pump:'well_pump',raw_water_pump:'raw_water_pump',high_service_pump:'high_service_pump',rock_crusher:'rock_crusher',screen_deck_vibrator:'screen_deck_vibrator',stacker_conveyor:'stacker_conveyor',reclaimer_conveyor:'reclaimer_conveyor',thickener_drive:'thickener_drive',slurry_pump:'slurry_pump',ball_mill:'ball_mill',sag_mill:'sag_mill',crusher_motor:'crusher_motor',diesel_generator:'diesel_generator',natural_gas_generator:'natural_gas_generator',standby_generator:'standby_generator',air_compressor:'air_compressor',pipeline_pump:'pipeline_pump',transfer_pump:'transfer_pump',separator_pump:'separator_pump',compressor:'compressor',flare_blower:'flare_blower',cooling_fan:'cooling_fan',hydraulic_power_unit:'hydraulic_power_unit',electric_motor:'electric_motor',pump:'pump',fan:'fan',gearbox:'gearbox',bearing_housing:'bearing_housing',conveyor:'conveyor',generator:'generator',turbine:'turbine',agitator_mixer:'agitator_mixer',hydraulic_system:'hydraulic_system',vacuum_pump:'vacuum_pump',other_equipment:'other_equipment'};
+const ASSET_MAP={haf_fan:'greenhouse_fan',exhaust_fan:'greenhouse_fan',circulation_pump:'greenhouse_pump',boiler_pump:'greenhouse_pump',nutrient_pump:'greenhouse_pump',co2_compressor:'compressor_rotary',co2_pump:'greenhouse_pump',irrigation_pump:'irrigation_pump',condensate_pump:'greenhouse_pump',thermal_curtain_drive:'conveyor_drive',hvac_unit:'hvac_fan',auger_motor:'conveyor_drive',grain_bin_fan:'greenhouse_fan',grain_dryer:'hvac_fan',irrigation_pivot_drive:'conveyor_drive',manure_pump:'industrial_pump',feed_conveyor:'conveyor_drive',grain_elevator_leg_motor:'conveyor_drive',fertilizer_pump:'industrial_pump',vacuum_transfer_blower:'greenhouse_fan',tractor:'generic',tractor_pto:'generic',grain_auger:'conveyor_drive',skid_steer_hydraulic_pump:'industrial_pump',excavator_main_pump:'industrial_pump',wheel_loader_hydraulic_pump:'industrial_pump',dozer_final_drive:'conveyor_drive',excavator_final_drive:'conveyor_drive',travel_motor:'electric_motor_large',asphalt_plant_motor:'electric_motor_large',concrete_plant_mixer:'electric_motor_large',crusher_bearing_assembly:'crusher',vibratory_roller_drum:'vibrating_screen',hydraulic_pump:'industrial_pump',cnc_spindle:'electric_motor_small',injection_molding_machine:'electric_motor_large',extruder:'conveyor_drive',packaging_line_motor:'electric_motor_small',robotic_arm_servo:'electric_motor_small',dust_collector_fan:'greenhouse_fan',cooling_water_pump:'centrifugal_pump',process_pump:'industrial_pump',blower:'greenhouse_fan',rotary_airlock:'conveyor_drive',lift_station_pump:'municipal_pump',sewage_pump:'municipal_pump',aeration_blower:'greenhouse_fan',clarifier_drive:'conveyor_drive',sludge_pump:'municipal_pump',chemical_feed_pump:'industrial_pump',well_pump:'booster_pump',raw_water_pump:'municipal_pump',high_service_pump:'booster_pump',rock_crusher:'crusher',screen_deck_vibrator:'vibrating_screen',stacker_conveyor:'conveyor_drive',reclaimer_conveyor:'conveyor_drive',thickener_drive:'conveyor_drive',slurry_pump:'industrial_pump',ball_mill:'crusher',sag_mill:'crusher',crusher_motor:'crusher',diesel_generator:'generic',natural_gas_generator:'generic',standby_generator:'generic',air_compressor:'compressor_reciprocating',pipeline_pump:'industrial_pump',transfer_pump:'industrial_pump',separator_pump:'industrial_pump',compressor:'compressor_rotary',flare_blower:'greenhouse_fan',cooling_fan:'cooling_tower_fan',hydraulic_power_unit:'industrial_pump',electric_motor:'electric_motor_large',pump:'centrifugal_pump',fan:'greenhouse_fan',gearbox:'gearbox',bearing_housing:'generic',conveyor:'conveyor_drive',generator:'generic',turbine:'generic',agitator_mixer:'electric_motor_large',hydraulic_system:'industrial_pump',vacuum_pump:'industrial_pump',other_equipment:'generic'};
 
 const STAGE={healthy:{color:'#00C48C',bg:'#021509',icon:'✓'},watch:{color:'#F5C518',bg:'#1a1300',icon:'⚠'},urgent:{color:'#FF7A00',bg:'#1a0800',icon:'!'},critical:{color:'#FF3B3B',bg:'#190000',icon:'✕'}};
 
@@ -548,25 +563,20 @@ function clearError(){document.getElementById('error-box').classList.remove('sho
 async function runDiagnostic(){
   clearError();
   const rms=getEffectiveRms();
-  if(!uploadedWaveform&&csvWaveform){
-    uploadedWaveform=csvWaveform;
-    const fsTop=parseFloat(document.getElementById('csv-fs').value);
-    if(fsTop)document.getElementById('sample-rate').value=fsTop;
-    const rpmTop=parseFloat(document.getElementById('csv-rpm').value);
-    if(rpmTop)document.getElementById('shaft-rpm').value=rpmTop;
-  }
+  if(!uploadedWaveform&&csvWaveform){uploadedWaveform=csvWaveform;}
   if(!rms){showError('Enter RMS velocity or at least one XYZ axis reading.');return;}
   const btn=document.getElementById('run-btn');
   btn.disabled=true;btn.textContent='ANALYZING...';
   const body={asset_type:ASSET_MAP[currentAssetType]||'generic',rms_velocity:rms};
-  const sampleRate=parseFloat((document.getElementById('sample-rate')||{}).value)||parseFloat(document.getElementById('csv-fs').value);
+  const sampleRate=parseFloat(document.getElementById('csv-fs')?.value);
   if(uploadedWaveform){
     if(!sampleRate){showError('Sample rate is required when using waveform CSV.');btn.disabled=false;btn.textContent='RUN DIAGNOSTIC';return;}
     body.waveform=uploadedWaveform;body.sample_rate_hz=sampleRate;body.mode='spectral';
   }
   const aid=document.getElementById('asset-id').value.trim();
   if(aid)body.asset_id=aid;
-  const rpm=parseFloat(document.getElementById('shaft-rpm').value);if(rpm)body.shaft_rpm=rpm;
+  const rpm=parseFloat(document.getElementById('shaft-rpm').value)||parseFloat(document.getElementById('csv-rpm').value);
+  if(rpm)body.shaft_rpm=rpm;
   const bn=parseFloat(document.getElementById('bearing-n')?.value);
   const bbd=parseFloat(document.getElementById('bearing-bd')?.value);
   const bpd=parseFloat(document.getElementById('bearing-pd')?.value);
@@ -602,6 +612,14 @@ function saveOfflineScan(body,ctx){
   }catch(e){console.warn('Offline save failed',e);}
 }
 
+function exportTrialData(){
+  const payload={exported_at:new Date().toISOString(),product:'EarlyEdge Field Pro',version:'v3.0 Buyer Trial',owner:'AW IP Holdings Inc.',history:JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}'),offline_scans:JSON.parse(localStorage.getItem('earlyedge_offline_scans')||'[]')};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='earlyedge-trial-export.json';a.click();
+  URL.revokeObjectURL(url);
+}
+
 function getProofDrivers(data,extra){
   const d=[];
   if(extra.effectiveRms>7.1)d.push('RMS vibration is above critical threshold.');
@@ -623,6 +641,7 @@ function getInspectList(stage,extra){
 }
 
 function renderResults(data,ctx,extra){
+  const reportId='EE-'+Date.now().toString(36).toUpperCase();
   const ba=document.getElementById('bearing-alert');ba.classList.remove('show');
   ['xyz-card','cost-card','runway-card','history-card','channel-card'].forEach(id=>document.getElementById(id).style.display='none');
   ['proof-drivers','inspect-list'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
@@ -641,14 +660,12 @@ function renderResults(data,ctx,extra){
   const cost=data.cost_impact||{};
   const dtf=data.days_to_failure||{};
 
-  // Overall Stage Banner
   const banner=document.getElementById('overall-stage-banner');
   banner.style.background=s.bg;banner.style.borderColor=s.color;
   const osb=document.getElementById('osb-stage-text');osb.style.color=s.color;osb.textContent=s.icon+' '+stageKey.toUpperCase();
 
-  // Decision card
   const dc=document.getElementById('decision-card');dc.style.background=s.bg;dc.style.borderLeftColor=s.color;
-  const ctxParts=[];if(ctx.location)ctxParts.push(ctx.location);if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);ctxParts.push(ctx.timestamp);if(ctx.load)ctxParts.push('Load: '+ctx.load);
+  const ctxParts=[];if(ctx.location)ctxParts.push(ctx.location);if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);ctxParts.push(ctx.timestamp);ctxParts.push('Report: '+reportId);if(ctx.load)ctxParts.push('Load: '+ctx.load);
   document.getElementById('dc-asset').textContent=extra.assetLabel.toUpperCase()+(extra.assetId?' · '+extra.assetId:'')+'\n'+ctxParts.join('  ·  ');
   const specs=[];if(extra.rpm)specs.push('RPM: <span style="color:#bbb">'+extra.rpm+'</span>');if(extra.bearingTemp)specs.push('Temp: <span style="color:#bbb">'+extra.bearingTemp+'°C</span>');specs.push('RMS: <span style="color:#bbb">'+extra.effectiveRms.toFixed(2)+' mm/s</span>');if(data.data_mode&&data.data_mode!=='field'){const ml={'spectral_full':'5-Ch·Waveform+Geo','spectral_no_geometry':'5-Ch·Waveform','spectral_partial':'5-Ch·Waveform'};specs.push('Mode: <span style="color:#58a6ff">'+(ml[data.data_mode]||data.data_mode)+'</span>');}
   document.getElementById('dc-specs').innerHTML=specs.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
@@ -753,8 +770,10 @@ function resetForm(){
   ['proof-drivers','inspect-list'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
   document.getElementById('accel-badge').style.display='none';document.getElementById('adv-section').classList.remove('open');
   ['cost-save','cost-range','cost-roi','cost-basis','runway-range','runway-narrative','temp-hint','vector-rms'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
-  csvWaveform=null;csvFs=null;uploadedWaveform=null;const ws=document.getElementById('waveform-status');if(ws){ws.textContent='';ws.style.color='';}const wci=document.getElementById('waveform-csv');if(wci)wci.value='';document.getElementById('csv-status').textContent='Upload a waveform CSV for full 5-channel analysis';document.getElementById('csv-btn').textContent='Choose CSV File';switchTab('manual');
-  ['rms','bearing-temp','vib-h','vib-v','vib-a','shaft-rpm','vane-count','asset-id','current-a','load-pct','csv-fs','csv-rpm','sample-rate','waveform-column','bearing-n','bearing-bd','bearing-pd','bearing-beta'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  csvWaveform=null;csvFs=null;uploadedWaveform=null;const csvInput=document.getElementById('csv-input');if(csvInput)csvInput.value='';
+  document.getElementById('csv-status').textContent='Upload a waveform CSV for full 5-channel analysis';
+  document.getElementById('csv-btn').textContent='Choose CSV File';switchTab('manual');
+  ['rms','bearing-temp','vib-h','vib-v','vib-a','shaft-rpm','vane-count','asset-id','location','operator','current-a','load-pct','csv-fs','csv-rpm','bearing-n','bearing-bd','bearing-pd','bearing-beta'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
   const fn=document.getElementById('field-notes');if(fn)fn.value='';
   document.getElementById('load-condition').value='';document.getElementById('km-savings-sub').textContent='vs emergency repair';
 }
@@ -763,7 +782,7 @@ let csvWaveform=null,csvFs=null;
 let uploadedWaveform=null;
 let apiOnline=false;
 
-window.addEventListener('load',checkApiStatus);
+window.addEventListener('load',()=>{if(checkTrialAccess())checkApiStatus();});
 
 async function checkApiStatus(){
   const el=document.getElementById('api-status');
@@ -771,7 +790,12 @@ async function checkApiStatus(){
     const res=await fetch(API+'/health',{method:'GET'});
     if(res.ok){apiOnline=true;el.innerHTML='● API ONLINE · LIVE FIELD MODE · WAVEFORM READY';el.style.color='var(--green)';}
     else throw new Error('bad status');
-  }catch(e){apiOnline=false;el.innerHTML='● API OFFLINE · LOCAL SAVE MODE AVAILABLE';el.style.color='var(--orange)';}
+  }catch(e){
+    apiOnline=false;
+    const offline=JSON.parse(localStorage.getItem('earlyedge_offline_scans')||'[]').length;
+    el.innerHTML='● API OFFLINE · LOCAL SAVE MODE AVAILABLE · '+offline+' pending scan(s)';
+    el.style.color='var(--orange)';
+  }
 }
 
 function handleCSV(input){
@@ -784,7 +808,7 @@ function handleCSV(input){
     const samples=[];
     for(const line of lines){const v=parseFloat(line.split(',')[0].split('\t')[0]);if(!isNaN(v))samples.push(v);}
     if(samples.length<64){status.textContent='Need at least 64 samples — got '+samples.length;btn.textContent='Choose CSV File';return;}
-    csvWaveform=samples;
+    csvWaveform=samples;uploadedWaveform=samples;
     const fs=parseFloat(document.getElementById('csv-fs').value);
     if(fs&&fs>=100)csvFs=fs;
     status.textContent='✓ '+file.name+' — '+samples.length.toLocaleString()+' samples loaded'+(csvFs?' @ '+csvFs+' Hz':'');
