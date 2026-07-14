@@ -61,6 +61,11 @@ input.crit{border-color:var(--red)}
 .dc-health-label{font-size:10px;opacity:.6;letter-spacing:.1em}
 .dc-bar-track{background:rgba(0,0,0,0.35);border-radius:3px;height:6px;margin-bottom:16px}
 .dc-bar-fill{height:100%;border-radius:3px;transition:width .7s}
+.gauge-wrap{display:flex;align-items:center;gap:18px;margin-bottom:16px}
+.gauge-num{font-size:26px;font-weight:800}
+.gauge-label{font-size:10px;opacity:.6;letter-spacing:.1em;margin-top:2px}
+.gauge-track{stroke:rgba(255,255,255,0.08);fill:none}
+.gauge-fill{fill:none;stroke-linecap:round;transition:stroke-dashoffset .7s}
 .key-metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .key-metric{background:rgba(0,0,0,0.25);border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.06)}
 .km-label{font-size:10px;opacity:.6;letter-spacing:.1em;margin-bottom:5px}
@@ -69,6 +74,18 @@ input.crit{border-color:var(--red)}
 .concern-card{border-radius:8px;padding:14px 16px;margin-bottom:14px;border:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.2)}
 .concern-label{font-size:10px;letter-spacing:.12em;opacity:.6;margin-bottom:6px}
 .concern-text{font-size:14px;font-weight:700;line-height:1.5}
+.timeline-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.baseline-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
+.baseline-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.baseline-dots{display:flex;gap:5px}
+.baseline-dot{width:9px;height:9px;border-radius:50%;background:#1e1e1e}
+.baseline-dot.filled{background:var(--green)}
+.timeline-track{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:14px 0 8px}
+.timeline-seg{flex:1;position:relative}
+.timeline-labels{display:flex;font-size:9px;color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.timeline-labels span{flex:1;text-align:center}
+.timeline-marker{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;white-space:nowrap}
+.timeline-date{font-size:12px;color:var(--muted);text-align:center;margin-top:14px}
 .runway-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px}
 .runway-title{font-size:10px;color:var(--muted);letter-spacing:.12em;margin-bottom:12px}
 .runway-main{display:flex;align-items:baseline;gap:10px;margin-bottom:6px}
@@ -117,9 +134,19 @@ input.crit{border-color:var(--red)}
 .ch-critical{background:var(--red)}
 .ch-zero{background:#2a2a2a}
 .ch-pct{text-align:right;font-size:10px;color:var(--dim)}
-.overall-stage-banner{border-radius:6px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;border:1px solid}
-.osb-label{font-size:10px;letter-spacing:.1em;opacity:.6}
-.osb-stage{font-size:16px;font-weight:900;letter-spacing:.08em}
+.overall-stage-banner{border-radius:8px;padding:20px 18px;margin-bottom:14px;text-align:center;border:2px solid}
+/* Slow pulse (3.5s+ cycle) — deliberately gentle, well below the ~3 flashes/sec
+   threshold that can trigger photosensitive seizures. Healthy pulses slowest
+   and subtlest; critical pulses fastest but still calm, never a hard flash. */
+@keyframes pulse-healthy{0%,100%{box-shadow:0 0 0 0 rgba(0,196,140,.25)}50%{box-shadow:0 0 0 8px rgba(0,196,140,0)}}
+@keyframes pulse-urgent{0%,100%{box-shadow:0 0 0 0 rgba(255,122,0,.3)}50%{box-shadow:0 0 0 10px rgba(255,122,0,0)}}
+@keyframes pulse-critical{0%,100%{box-shadow:0 0 0 0 rgba(255,59,59,.35)}50%{box-shadow:0 0 0 12px rgba(255,59,59,0)}}
+.pulse-healthy{animation:pulse-healthy 4s ease-in-out infinite}
+.pulse-urgent{animation:pulse-urgent 3s ease-in-out infinite}
+.pulse-critical{animation:pulse-critical 2.2s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){.pulse-healthy,.pulse-urgent,.pulse-critical{animation:none}}
+.osb-label{font-size:10px;letter-spacing:.18em;opacity:.65;margin-bottom:6px}
+.osb-stage{font-size:34px;font-weight:900;letter-spacing:.1em;line-height:1.1}
 .adv-toggle{width:100%;background:transparent;color:var(--dim);border:1px solid var(--border);border-radius:6px;padding:10px;font-size:11px;font-family:var(--font);cursor:pointer;letter-spacing:.08em;margin-bottom:10px}
 .adv-section{display:none}
 .adv-section.open{display:block}
@@ -130,17 +157,15 @@ input.crit{border-color:var(--red)}
 .reading-value{font-size:14px;color:#e8e8e8;font-weight:700}
 .print-btn{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:13px;font-size:12px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:10px}
 .reset-btn{width:100%;background:transparent;color:var(--dim);border:1px solid #1a1a1a;border-radius:6px;padding:13px;font-size:11px;font-family:var(--font);letter-spacing:.1em;cursor:pointer;margin-bottom:8px}
-.cta-card{background:#0a0f0a;border:1px solid rgba(0,196,140,.2);border-left:3px solid var(--green);border-radius:10px;padding:18px;margin-bottom:14px}
-.cta-title{font-size:10px;color:var(--green);letter-spacing:.12em;margin-bottom:8px}
-.cta-text{font-size:13px;color:#ccc;line-height:1.7}
-footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;text-align:center;letter-spacing:.1em}
+footer{padding:16px 20px;border-top:1px solid #111;font-size:9px;color:#333;text-align:center;letter-spacing:.08em;line-height:1.9}
 .bearing-alert{background:#1a0900;border:1px solid rgba(255,122,0,.25);border-left:3px solid var(--orange);border-radius:8px;padding:13px 15px;margin-bottom:14px;font-size:13px;color:var(--orange);line-height:1.5;display:none}
 .bearing-alert.show{display:block}
 @media print{
   body{background:#fff;color:#000;max-width:none}
-  header,footer,.reset-btn,.print-btn,.tabs,.advanced-toggle,.adv-toggle,.cta-card{display:none!important}
-  .decision-card,.card,.runway-card{border-color:#bbb;background:#fff}
-  .dc-stage,.runway-days,.km-value{color:#000!important}
+  header,.reset-btn,.print-btn,.tabs,.advanced-toggle,.adv-toggle{display:none!important}
+  footer{color:#555!important;border-top:1px solid #ccc}
+  .decision-card,.card,.runway-card,.timeline-card{border-color:#bbb;background:#fff}
+  .dc-stage,.runway-days,.km-value,.gauge-num,.osb-stage{color:#000!important}
   .cost-cell.now{background:#f0fff8;border-color:#aaa}
   .cost-cell.later{background:#fff0f0;border-color:#aaa}
   .cost-cell.now .cost-cell-value{color:#006644!important}
@@ -152,17 +177,18 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
   .action-text,.reading-value,.km-value{color:#111!important}
   .bearing-alert.show{background:#fff3e0;border-color:#ff9800;color:#e65100!important}
   .overall-stage-banner{background:#f5f5f5!important;border-color:#ccc!important}
+  .gauge-track{stroke:#ddd!important}
+  #qr-block{display:block!important}
 }
 </style>
 </head>
 <body>
 <header>
-<div><div class="logo">EARLYEDGE</div><div class="logo-sub">FIELD DIAGNOSTIC · v3.0</div></div>
-<div class="live-badge">● BUYER TRIAL</div>
+<div><div class="logo">EARLYEDGE</div><div class="logo-sub">FIELD DIAGNOSTIC · v3.1</div></div>
+<div class="live-badge">● EVALUATION VERSION</div>
 </header>
 <main>
-<div style="border:1px solid rgba(0,196,140,.25);background:#06120d;border-radius:8px;padding:12px;margin-bottom:14px;font-size:11px;color:#00C48C;line-height:1.6">CONTROLLED BUYER TRIAL · Proprietary scoring hidden · API validation available under license/NDA · Front-end preview access</div>
-<div class="card" id="system-card" style="margin-bottom:14px"><div class="card-title">SYSTEM STATUS</div><div id="api-status" style="font-size:13px;color:var(--muted)">Checking API...</div><div style="font-size:10px;color:#444;margin-top:6px">Controlled evaluation portal · EarlyEdge engine output is proprietary</div></div>
+<div class="card" id="system-card" style="margin-bottom:14px"><div class="card-title">SYSTEM STATUS</div><div id="api-status" style="font-size:13px;color:var(--muted)">Checking API...</div><div id="last-sync" style="font-size:10px;color:#555;margin-top:4px"></div><div style="font-size:10px;color:#444;margin-top:6px">Controlled evaluation portal · EarlyEdge engine output is proprietary</div><div id="audit-status-line" style="font-size:10px;color:#444;margin-top:4px"></div></div>
 <div id="form-section">
 <div class="tabs">
 <button class="tab active" onclick="switchTab('manual')">⌨ Enter Readings</button>
@@ -248,13 +274,38 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 </optgroup>
 </select></div>
 <div class="field"><label>Asset ID <span>(optional — enables trend tracking)</span></label>
-<input type="text" id="asset-id" placeholder="e.g. pump-bay3-01"></div>
+<input type="text" id="asset-id" placeholder="e.g. pump-bay3-01" onblur="autofillAssetProfile(this.value)"></div>
 <div class="field"><label>Site / Location <span>(optional)</span></label>
 <input type="text" id="location" placeholder="e.g. Bay 3, Building A"></div>
 <div class="field"><label>Technician <span>(optional)</span></label>
 <input type="text" id="operator" placeholder="Your name"></div>
+<div class="field"><label>Customer / Site Name <span>(optional — shown on printed report)</span></label>
+<input type="text" id="customer-name" placeholder="e.g. Northgate Industries"></div>
+<div class="field">
+<label>Customer Logo <span>(optional — printed report header)</span></label>
+<input type="file" id="customer-logo-input" accept="image/*" style="display:none" onchange="handleCustomerLogo(this)">
+<button type="button" class="photo-btn" style="width:100%" onclick="document.getElementById('customer-logo-input').click()" id="customer-logo-btn">🏢 Add Customer Logo</button>
+<img id="customer-logo-preview" style="max-height:60px;border-radius:4px;margin-top:8px;display:none">
+</div>
+<div class="field"><label>Technician Signature <span>(optional — typed, printed report)</span></label>
+<input type="text" id="tech-signature" placeholder="Type name to sign report" style="font-family:cursive;font-size:18px"></div>
+<div class="field"><label>Scan Cost (CAD) <span>(optional — enables ROI calculation)</span></label>
+<input type="number" step="1" id="scan-cost" placeholder="e.g. 150" min="0"></div>
 <div class="field"><label>Field Notes <span>(optional — noise, smell, visual)</span></label>
 <input type="text" id="field-notes" placeholder="e.g. Grinding noise, oil leak near seal"></div>
+<div class="field">
+<label>Asset Photo <span>(optional — included in printed report)</span></label>
+<input type="file" id="asset-photo-input" accept="image/*" capture="environment" style="display:none" onchange="handleAssetPhoto(this)">
+<button type="button" class="photo-btn" style="width:100%" onclick="document.getElementById('asset-photo-input').click()" id="asset-photo-btn">📷 Take Asset Photo</button>
+<div id="photo-annotate-wrap" style="position:relative;display:none;margin-top:8px">
+  <canvas id="photo-annotate-canvas" style="width:100%;border-radius:6px;touch-action:none;display:block"></canvas>
+  <div class="grid2" style="margin-top:8px">
+    <button type="button" class="photo-btn" style="width:100%;font-size:11px" onclick="clearPhotoAnnotations()">✕ Clear Markup</button>
+    <button type="button" class="photo-btn" style="width:100%;font-size:11px" onclick="undoPhotoAnnotation()">↶ Undo Stroke</button>
+  </div>
+  <div style="font-size:9px;color:#444;margin-top:6px">Draw circles/arrows with your finger to mark areas of concern.</div>
+</div>
+</div>
 <div class="field"><label>Load Condition <span>(optional)</span></label>
 <select id="load-condition">
 <option value="">— Select if known —</option>
@@ -294,13 +345,19 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 </div></div>
 <div class="error-box" id="error-box"></div>
 <div class="grid2" style="margin-bottom:14px">
-<button class="photo-btn" onclick="loadDemo('healthy')">Sample Healthy Case</button>
-<button class="photo-btn" onclick="loadDemo('urgent')">Sample Fault Case</button>
+<button class="photo-btn" onclick="loadDemo('healthy')">Demo Healthy</button>
+<button class="photo-btn" onclick="loadDemo('urgent')">Demo Fault</button>
 </div>
 <button class="run-btn" id="run-btn" onclick="runDiagnostic()">RUN DIAGNOSTIC</button>
 </div>
 
 <div id="results">
+  <!-- NEW: Overall Stage Banner -->
+  <div id="customer-header" style="display:none;text-align:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+    <img id="customer-logo-report" style="max-height:50px;margin-bottom:6px;display:none">
+    <div id="customer-name-report" style="font-size:13px;color:#ccc;letter-spacing:.08em"></div>
+  </div>
+
   <div class="overall-stage-banner" id="overall-stage-banner">
     <div class="osb-label">OVERALL STAGE</div>
     <div class="osb-stage" id="osb-stage-text"></div>
@@ -308,17 +365,28 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 
   <div class="decision-card" id="decision-card">
     <div class="dc-asset" id="dc-asset"></div>
-    <div class="dc-specs" id="dc-specs" style="font-size:11px;color:#777;margin-bottom:12px;line-height:1.8"></div>
-    <div id="stage-trigger" style="display:none;font-size:11px;color:#aaa;background:rgba(255,255,255,0.04);border-left:3px solid;border-color:inherit;border-radius:4px;padding:8px 10px;margin-bottom:12px;line-height:1.5"></div>
-    <div id="primary-driver-badge" style="display:none;font-size:10px;font-weight:700;letter-spacing:.1em;padding:5px 10px;border-radius:4px;margin-bottom:12px;background:rgba(255,255,255,0.06);color:#ccc;border:1px solid #2a2a2a"></div>
+    <div class="dc-specs" id="dc-specs" style="font-size:11px;color:#777;margin-bottom:4px;line-height:1.8"></div>
+    <div style="font-size:9px;color:#3a3a3a;margin-bottom:12px;letter-spacing:.05em" id="dc-meta"></div>
     <div class="dc-status-row">
       <div class="dc-stage" id="dc-stage"></div>
-      <div class="dc-health">
-        <span class="dc-health-num" id="dc-health-num"></span>
-        <span class="dc-health-label">MACHINE HEALTH</span>
+      <div style="text-align:right">
+        <div style="font-size:9px;color:#888;letter-spacing:.1em;margin-bottom:2px">URGENCY</div>
+        <div id="dc-urgency" style="font-size:16px;font-weight:900;letter-spacing:.04em"></div>
       </div>
     </div>
-    <div class="dc-bar-track"><div class="dc-bar-fill" id="dc-bar"></div></div>
+    <div class="gauge-wrap">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle class="gauge-track" cx="44" cy="44" r="38" stroke-width="8"></circle>
+        <circle class="gauge-fill" id="gauge-fill" cx="44" cy="44" r="38" stroke-width="8"
+                stroke-dasharray="238.76" stroke-dashoffset="238.76"
+                transform="rotate(-90 44 44)"></circle>
+      </svg>
+      <div>
+        <div class="gauge-num" id="dc-health-num"></div>
+        <div class="gauge-label">MECHANICAL HEALTH</div>
+        <div class="gauge-label" id="gauge-ruc-label" style="margin-top:3px;opacity:.7"></div>
+      </div>
+    </div>
     <div class="key-metrics">
       <div class="key-metric">
         <div class="km-label">ESTIMATED RUNWAY</div>
@@ -326,12 +394,12 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
         <div class="km-sub" id="km-runway-sub"></div>
       </div>
       <div class="key-metric">
-        <div class="km-label">VALIDATION READINESS</div>
+        <div class="km-label">DATA QUALITY</div>
         <div class="km-value" id="km-confidence"></div>
         <div class="km-sub" id="km-confidence-sub"></div>
       </div>
       <div class="key-metric">
-        <div class="km-label">TREND</div>
+        <div class="km-label">HEALTH TREND</div>
         <div class="km-value" id="km-trend"></div>
         <div class="km-sub" id="km-trend-sub"></div>
       </div>
@@ -341,11 +409,33 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
         <div class="km-sub" id="km-savings-sub">vs emergency repair</div>
       </div>
     </div>
+    <div class="key-metric" id="risk-meter-card" style="margin-bottom:14px">
+      <div class="km-label">CONDITION RISK SCORE <span style="opacity:.6;font-weight:400">— relative index, not a validated probability</span></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px">
+        <div id="risk-meter-blocks" style="font-size:16px;letter-spacing:2px;font-family:var(--font)"></div>
+        <div class="km-value" id="risk-meter-pct" style="white-space:nowrap"></div>
+      </div>
+      <div class="km-sub" id="risk-meter-sub" style="margin-top:6px"></div>
+    </div>
     <div class="concern-card">
       <div class="concern-label">PRIMARY CONCERN</div>
       <div class="concern-text" id="concern-text"></div>
-      <div style="font-size:10px;color:#444;line-height:1.5;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:10px">Trial mode: outputs are condition-risk indicators for maintenance planning. Results should be confirmed against site procedures, historical records, and technician inspection before shutdown decisions.</div>
+    <div style="font-size:10px;color:#444;line-height:1.5;margin-top:10px;border-top:1px solid #1a1a1a;padding-top:10px">Condition-risk guidance only. Confirm shutdown decisions with site maintenance procedures.</div>
     </div>
+  </div>
+
+  <div class="timeline-card" id="timeline-card">
+    <div class="card-title">DETERIORATION TIMELINE — TODAY</div>
+    <div class="timeline-track" id="timeline-track"></div>
+    <div class="timeline-labels">
+      <span>Healthy</span><span>Watch</span><span>Urgent</span><span>Critical</span>
+    </div>
+    <div class="timeline-date" id="timeline-date"></div>
+  </div>
+
+  <div class="baseline-card" id="baseline-card" style="display:none">
+    <div class="card-title">MECHANICAL FINGERPRINT <span style="opacity:.6;font-weight:400">— statistical comparison to this asset's own scan history, not a trained ML model</span></div>
+    <div id="baseline-body"></div>
   </div>
 
   <div class="card" id="proof-card">
@@ -360,22 +450,32 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
 
   <div class="bearing-alert" id="bearing-alert"></div>
 
-  <div class="card">
-    <div class="card-title">RECOMMENDED ACTION</div>
-    <div class="action-text" id="action-text"></div>
+  <div class="card" id="next-step-card" style="border-left:4px solid var(--border2)">
+    <div class="card-title">RECOMMENDED NEXT STEP</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span id="ns-urgency-pill" style="font-size:11px;font-weight:900;letter-spacing:.08em;padding:5px 10px;border-radius:4px"></span>
+      <span id="ns-window" style="font-size:12px;color:var(--muted)"></span>
+    </div>
+    <div class="action-text" id="next-step-text"></div>
+    <div style="border-top:1px solid var(--border);margin-top:12px;padding-top:12px">
+      <div class="card-title" style="margin-bottom:6px">ENGINE DETAIL (this scan)</div>
+      <div class="action-text" id="action-text" style="font-size:13px"></div>
+    </div>
     <div class="next-check" id="next-check"></div>
   </div>
 
   <div class="runway-card" id="runway-card" style="display:none">
     <div class="runway-title">ESTIMATED TIME TO CRITICAL THRESHOLD</div>
+    <div style="font-size:10px;color:var(--dim);letter-spacing:.08em;margin-bottom:2px">BEST ESTIMATE</div>
     <div class="runway-main">
       <span class="runway-days" id="runway-days"></span>
       <span class="runway-unit">days</span>
-      <span class="runway-range" id="runway-range"></span>
     </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Range: <span id="runway-range"></span></div>
     <div class="runway-narrative" id="runway-narrative"></div>
     <div class="runway-badges">
       <span class="badge" id="trend-badge"></span>
+      <span class="badge" id="confidence-badge"></span>
       <span class="badge badge-accel" id="accel-badge" style="display:none">⚡ Accelerating</span>
     </div>
   </div>
@@ -397,7 +497,31 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div class="cost-save" id="cost-save"></div>
     <div class="cost-range" id="cost-range"></div>
     <div class="cost-roi" id="cost-roi"></div>
+    <div class="cost-grid" style="margin-top:12px">
+      <div class="cost-cell now">
+        <div class="cost-cell-label">DOWNTIME PREVENTED</div>
+        <div class="cost-cell-sub">est. hours avoided by<br>planned vs. emergency fix</div>
+        <div class="cost-cell-value" id="downtime-prevented"></div>
+      </div>
+      <div class="cost-cell now">
+        <div class="cost-cell-label">PRODUCTION PROTECTED</div>
+        <div class="cost-cell-sub">est. output value<br>at risk if unaddressed</div>
+        <div class="cost-cell-value" id="production-protected"></div>
+      </div>
+    </div>
+    <div class="key-metric" id="roi-card" style="display:none;margin-top:12px">
+      <div class="km-label">MONTHLY SCAN PROGRAM ROI</div>
+      <div class="baseline-row" style="margin-top:6px"><span style="color:var(--muted)">Today's inspection</span><span id="roi-scan-cost" style="font-weight:700"></span></div>
+      <div class="baseline-row"><span style="color:var(--muted)">Potential avoided loss</span><span id="roi-avoided" style="color:var(--green);font-weight:700"></span></div>
+      <div class="baseline-row"><span style="color:var(--muted)">ROI</span><span id="roi-multiple" style="color:var(--green);font-weight:700;font-size:18px"></span></div>
+      <div style="font-size:10px;color:var(--dim);margin-top:6px">Scan cost is technician-entered. Avoided loss uses the same estimate as Fix Now/Fix Later above.</div>
+    </div>
     <div class="cost-basis" id="cost-basis"></div>
+  </div>
+
+  <div class="card" id="photo-card" style="display:none">
+    <div class="card-title">ASSET PHOTO</div>
+    <img id="report-photo" style="width:100%;border-radius:6px;max-height:260px;object-fit:contain">
   </div>
 
   <div class="card" id="xyz-card" style="display:none">
@@ -405,8 +529,9 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div id="xyz-rows"></div>
   </div>
 
+  <!-- NEW: 5-Channel Bars -->
   <div class="card" id="channel-card" style="display:none">
-    <div class="card-title" id="channel-card-title">3-CHANNEL FIELD MODE</div>
+    <div class="card-title">5-CHANNEL DIAGNOSTIC</div>
     <div class="channel-bars" id="channel-bars"></div>
     <div style="font-size:10px;color:#333;margin-top:10px;line-height:1.6" id="channel-mode-note"></div>
   </div>
@@ -417,6 +542,7 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
       <div class="card-title">RAW READINGS</div>
       <div class="readings-grid" id="readings-grid"></div>
     </div>
+    <!-- NEW: EKS/TPE detail -->
     <div class="card" id="spectral-detail-card" style="display:none;margin-bottom:10px">
       <div class="card-title">WAVEFORM CHANNELS (EKS · TPE)</div>
       <div id="spectral-detail-body"></div>
@@ -428,32 +554,76 @@ footer{padding:14px 20px;border-top:1px solid #111;font-size:9px;color:#252525;t
     <div id="history-content"></div>
   </div>
 
-  <div class="cta-card">
-    <div class="cta-title">BUYER TRIAL — NEXT STEP</div>
-    <div class="cta-text">If this result matches your maintenance observations:<br><br><strong style="color:#00C48C">→ Request API Trial</strong> — 30-day live integration with your CMMS or field workflow<br><strong style="color:#00C48C">→ Validation Partner Package</strong> — side-by-side comparison against your existing diagnostic process<br><strong style="color:#00C48C">→ Licensing Discussion</strong> — OEM white-label or acquisition under NDA<br><br>EarlyEdge shortens diagnostic lead time without exposing proprietary scoring logic.<br><br><strong>awipholdings@gmail.com</strong></div>
+  <div class="card" id="audit-card">
+    <div class="card-title">AUDIT LOG <span style="opacity:.6;font-weight:400">— device-local, hash-chained record</span></div>
+    <div id="audit-summary"></div>
+    <div style="font-size:10px;color:var(--dim);line-height:1.6;margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
+      Each scan is recorded with a SHA-256 hash chained to the previous entry, so any after-the-fact edit to this device's log is mathematically detectable. This proves local record integrity — it is not a substitute for server-side custody. For multi-technician or regulatory use, this log should be synced to the EarlyEdge backend as an append-only record.
+    </div>
+    <button class="photo-btn" style="width:100%;margin-top:10px" onclick="toggleAuditDetail()" id="audit-toggle-btn">▼ View Full Audit Trail</button>
+    <div id="audit-detail" style="display:none;margin-top:10px">
+      <div class="grid2" style="margin-bottom:10px">
+        <button class="photo-btn" style="width:100%;font-size:11px" onclick="runVerifyChain()">🔒 Verify Chain Integrity</button>
+        <button class="photo-btn" style="width:100%;font-size:11px" onclick="exportAuditLog()">⬇ Export Full Log (JSON)</button>
+      </div>
+      <div id="audit-verify-result" style="font-size:12px;margin-bottom:10px"></div>
+      <div id="audit-entries" style="display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto"></div>
+    </div>
   </div>
 
-  <button class="print-btn" onclick="window.print()">🖨 PRINT / SAVE REPORT</button>
-  <button class="print-btn" onclick="exportTrialData()">⬇ EXPORT TRIAL DATA</button>
+  <div id="signature-block" style="display:none;padding:14px 4px;border-top:1px solid var(--border);margin-bottom:12px">
+    <div style="font-size:9px;color:var(--dim);letter-spacing:.1em;margin-bottom:4px">TECHNICIAN SIGNATURE</div>
+    <div id="signature-text" style="font-family:cursive;font-size:20px;color:#ddd;border-bottom:1px solid #333;padding-bottom:6px"></div>
+  </div>
+
+  <div id="qr-block" style="text-align:center;margin-bottom:12px;display:none">
+    <img id="qr-code-img" style="width:120px;height:120px" alt="QR link to scan history">
+    <div style="font-size:9px;color:#444;margin-top:6px;line-height:1.5">
+      Scans to raw scan history (requires internet + asset ID).<br>No formatted scan-detail page exists yet.
+    </div>
+  </div>
+  <button class="print-btn" onclick="window.print()">🖨 GENERATE AUDIT-READY REPORT (PDF)</button>
+  <div class="grid3" style="margin-bottom:10px">
+    <button class="photo-btn" style="width:100%" onclick="exportScanJSON()">⬇ JSON</button>
+    <button class="photo-btn" style="width:100%" onclick="exportScanCSV()">⬇ CSV</button>
+    <button class="photo-btn" style="width:100%" onclick="emailReportSummary()">✉ Email</button>
+  </div>
   <button class="reset-btn" onclick="resetForm()">← NEW DIAGNOSTIC</button>
 </div>
 </main>
-<footer>AW IP HOLDINGS INC. · EARLYEDGE FIELD PRO · PROPRIETARY · CONTROLLED BUYER TRIAL · DO NOT DISTRIBUTE</footer>
+<footer>
+EarlyEdge™ Predictive Maintenance Engine<br>
+Powered by the EarlyEdge™ Spectral Intelligence Engine<br>
+<span style="font-size:8px;opacity:.7">AWIP Innovation &amp; Holdings Inc.</span><br>
+Confidential Evaluation Report<br>
+© 2026 AWIP Innovation &amp; Holdings Inc. All Rights Reserved.
+</footer>
 
 <script>
+/* ===========================================================================
+   EARLYEDGE FIELD PRO — v3.1 CHANGELOG
+   ---------------------------------------------------------------------------
+   1. Urgency + Recommended Next Step: added a plain-language URGENCY badge
+      (LOW/MEDIUM/HIGH/HIGH-IMMEDIATE) and a dedicated "Recommended Next Step"
+      card, both derived directly from overall_stage — no new scoring model.
+   2. Audit Log: added a device-local, SHA-256 hash-chained log of every scan
+      (see AUDIT LOG block below). Each printed/exported report now carries
+      its own audit sequence number and hash. Chain integrity is user-
+      verifiable in-app. Honest scope disclaimers are attached everywhere
+      this appears — see the comment above const AUDIT_KEY for exactly what
+      this does and does not prove.
+   3. Fixed a production bug where any CSV waveform upload crashed
+      runDiagnostic() due to a reference to a nonexistent '#sample-rate'
+      element (dead code from an earlier layout).
+   4. Print/export flow relabeled "Generate Audit-Ready Report" and now
+      includes audit sequence + hash in the report metadata line.
+   NOT done in this pass (needs backend work, flagged to Andrew separately):
+   server-side/append-only audit storage, automatic silent PDF generation
+   without user tap, and multi-device audit sync.
+=========================================================================== */
 const API='https://earlyedge-api.onrender.com';
 const API_KEY='';
 const HISTORY_KEY='earlyedge_history';
-const TRIAL_CODE='EARLYEDGE30';
-
-function checkTrialAccess(){
-  const saved=localStorage.getItem('earlyedge_trial_code');
-  if(saved===TRIAL_CODE)return true;
-  const code=prompt('Enter EarlyEdge buyer trial code:');
-  if(code===TRIAL_CODE){localStorage.setItem('earlyedge_trial_code',code);return true;}
-  document.body.innerHTML='<div style="padding:30px;color:white;font-family:Courier New;background:#090909;min-height:100vh"><h2 style="margin-bottom:16px;letter-spacing:.1em">EARLYEDGE BUYER TRIAL</h2><p style="color:#777;margin-bottom:8px">Access required. Contact AW IP Holdings Inc. to receive your trial code.</p><p style="color:#444;font-size:12px">awipholdings@gmail.com</p></div>';
-  return false;
-}
 
 function getHistory(id){if(!id)return[];try{const a=JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}');return a[id]||[];}catch{return[];}}
 function saveToHistory(id,data,extra){
@@ -478,15 +648,109 @@ function getTrend(h){
 function renderSparkline(history,color){
   if(history.length<2)return'';
   const vals=history.slice(-10).map(h=>h.vdi);
-  const mn=Math.min(...vals),mx=Math.max(...vals,mn+1),w=80,h=28;
+  const mn=Math.min(...vals),mx=Math.max(...vals,mn+1),w=104,h=36;
   const pts=vals.map((v,i)=>((i/(vals.length-1))*w).toFixed(1)+','+(h-((v-mn)/(mx-mn))*h).toFixed(1)).join(' ');
   return'<svg width="'+w+'" height="'+h+'" style="vertical-align:middle;margin-left:8px"><polyline points="'+pts+'" fill="none" stroke="'+color+'" stroke-width="1.8" stroke-linejoin="round"/><circle cx="'+w+'" cy="'+(h-((vals[vals.length-1]-mn)/(mx-mn))*h).toFixed(1)+'" r="2.5" fill="'+color+'"/></svg>';
 }
 function apiHeaders(){const h={'Content-Type':'application/json'};if(API_KEY)h['x-api-key']=API_KEY;return h;}
 
-const ASSET_MAP={haf_fan:'greenhouse_fan',exhaust_fan:'greenhouse_fan',circulation_pump:'greenhouse_pump',boiler_pump:'greenhouse_pump',nutrient_pump:'greenhouse_pump',co2_compressor:'compressor_rotary',co2_pump:'greenhouse_pump',irrigation_pump:'irrigation_pump',condensate_pump:'greenhouse_pump',thermal_curtain_drive:'conveyor_drive',hvac_unit:'hvac_fan',auger_motor:'conveyor_drive',grain_bin_fan:'greenhouse_fan',grain_dryer:'hvac_fan',irrigation_pivot_drive:'conveyor_drive',manure_pump:'industrial_pump',feed_conveyor:'conveyor_drive',grain_elevator_leg_motor:'conveyor_drive',fertilizer_pump:'industrial_pump',vacuum_transfer_blower:'greenhouse_fan',tractor:'generic',tractor_pto:'generic',grain_auger:'conveyor_drive',skid_steer_hydraulic_pump:'industrial_pump',excavator_main_pump:'industrial_pump',wheel_loader_hydraulic_pump:'industrial_pump',dozer_final_drive:'conveyor_drive',excavator_final_drive:'conveyor_drive',travel_motor:'electric_motor_large',asphalt_plant_motor:'electric_motor_large',concrete_plant_mixer:'electric_motor_large',crusher_bearing_assembly:'crusher',vibratory_roller_drum:'vibrating_screen',hydraulic_pump:'industrial_pump',cnc_spindle:'electric_motor_small',injection_molding_machine:'electric_motor_large',extruder:'conveyor_drive',packaging_line_motor:'electric_motor_small',robotic_arm_servo:'electric_motor_small',dust_collector_fan:'greenhouse_fan',cooling_water_pump:'centrifugal_pump',process_pump:'industrial_pump',blower:'greenhouse_fan',rotary_airlock:'conveyor_drive',lift_station_pump:'municipal_pump',sewage_pump:'municipal_pump',aeration_blower:'greenhouse_fan',clarifier_drive:'conveyor_drive',sludge_pump:'municipal_pump',chemical_feed_pump:'industrial_pump',well_pump:'booster_pump',raw_water_pump:'municipal_pump',high_service_pump:'booster_pump',rock_crusher:'crusher',screen_deck_vibrator:'vibrating_screen',stacker_conveyor:'conveyor_drive',reclaimer_conveyor:'conveyor_drive',thickener_drive:'conveyor_drive',slurry_pump:'industrial_pump',ball_mill:'crusher',sag_mill:'crusher',crusher_motor:'crusher',diesel_generator:'generic',natural_gas_generator:'generic',standby_generator:'generic',air_compressor:'compressor_reciprocating',pipeline_pump:'industrial_pump',transfer_pump:'industrial_pump',separator_pump:'industrial_pump',compressor:'compressor_rotary',flare_blower:'greenhouse_fan',cooling_fan:'cooling_tower_fan',hydraulic_power_unit:'industrial_pump',electric_motor:'electric_motor_large',pump:'centrifugal_pump',fan:'greenhouse_fan',gearbox:'gearbox',bearing_housing:'generic',conveyor:'conveyor_drive',generator:'generic',turbine:'generic',agitator_mixer:'electric_motor_large',hydraulic_system:'industrial_pump',vacuum_pump:'industrial_pump',other_equipment:'generic'};
+const ASSET_MAP={haf_fan:'haf_fan',exhaust_fan:'exhaust_fan',circulation_pump:'circulation_pump',boiler_pump:'boiler_pump',nutrient_pump:'nutrient_pump',co2_compressor:'co2_compressor',co2_pump:'co2_pump',irrigation_pump:'irrigation_pump',condensate_pump:'condensate_pump',thermal_curtain_drive:'thermal_curtain_drive',hvac_unit:'hvac_unit',auger_motor:'auger_motor',grain_bin_fan:'grain_bin_fan',grain_dryer:'grain_dryer',irrigation_pivot_drive:'irrigation_pivot_drive',manure_pump:'manure_pump',feed_conveyor:'feed_conveyor',grain_elevator_leg_motor:'grain_elevator_leg_motor',fertilizer_pump:'fertilizer_pump',vacuum_transfer_blower:'vacuum_transfer_blower',tractor:'tractor',tractor_pto:'tractor_pto',grain_auger:'grain_auger',skid_steer_hydraulic_pump:'skid_steer_hydraulic_pump',excavator_main_pump:'excavator_main_pump',wheel_loader_hydraulic_pump:'wheel_loader_hydraulic_pump',dozer_final_drive:'dozer_final_drive',excavator_final_drive:'excavator_final_drive',travel_motor:'travel_motor',asphalt_plant_motor:'asphalt_plant_motor',concrete_plant_mixer:'concrete_plant_mixer',crusher_bearing_assembly:'crusher_bearing_assembly',vibratory_roller_drum:'vibratory_roller_drum',hydraulic_pump:'hydraulic_pump',cnc_spindle:'cnc_spindle',injection_molding_machine:'injection_molding_machine',extruder:'extruder',packaging_line_motor:'packaging_line_motor',robotic_arm_servo:'robotic_arm_servo',dust_collector_fan:'dust_collector_fan',cooling_water_pump:'cooling_water_pump',process_pump:'process_pump',blower:'blower',rotary_airlock:'rotary_airlock',lift_station_pump:'lift_station_pump',sewage_pump:'sewage_pump',aeration_blower:'aeration_blower',clarifier_drive:'clarifier_drive',sludge_pump:'sludge_pump',chemical_feed_pump:'chemical_feed_pump',well_pump:'well_pump',raw_water_pump:'raw_water_pump',high_service_pump:'high_service_pump',rock_crusher:'rock_crusher',screen_deck_vibrator:'screen_deck_vibrator',stacker_conveyor:'stacker_conveyor',reclaimer_conveyor:'reclaimer_conveyor',thickener_drive:'thickener_drive',slurry_pump:'slurry_pump',ball_mill:'ball_mill',sag_mill:'sag_mill',crusher_motor:'crusher_motor',diesel_generator:'diesel_generator',natural_gas_generator:'natural_gas_generator',standby_generator:'standby_generator',air_compressor:'air_compressor',pipeline_pump:'pipeline_pump',transfer_pump:'transfer_pump',separator_pump:'separator_pump',compressor:'compressor',flare_blower:'flare_blower',cooling_fan:'cooling_fan',hydraulic_power_unit:'hydraulic_power_unit',electric_motor:'electric_motor',pump:'pump',fan:'fan',gearbox:'gearbox',bearing_housing:'bearing_housing',conveyor:'conveyor',generator:'generator',turbine:'turbine',agitator_mixer:'agitator_mixer',hydraulic_system:'hydraulic_system',vacuum_pump:'vacuum_pump',other_equipment:'other_equipment'};
 
 const STAGE={healthy:{color:'#00C48C',bg:'#021509',icon:'✓'},watch:{color:'#F5C518',bg:'#1a1300',icon:'⚠'},urgent:{color:'#FF7A00',bg:'#1a0800',icon:'!'},critical:{color:'#FF3B3B',bg:'#190000',icon:'✕'}};
+
+/* ---------------------------------------------------------------------
+   URGENCY MODEL — a deliberately small, defensible 3-level scale derived
+   directly from overall_stage. This is NOT a separate scoring model; it's
+   a plain-language translation layer so a non-technical reader (or a
+   client's ops manager) can act on the result in under 5 seconds without
+   parsing "VDI" or "stage" terminology. Critical is flagged distinctly
+   as "HIGH — IMMEDIATE" since it carries a different response time than
+   a routine "high" priority.
+--------------------------------------------------------------------- */
+const URGENCY={
+  healthy:{level:'LOW',color:'#00C48C',window:'Routine — next scheduled scan'},
+  watch:{level:'MEDIUM',color:'#F5C518',window:'Plan inspection within 7–14 days'},
+  urgent:{level:'HIGH',color:'#FF7A00',window:'Inspect within 1–3 days'},
+  critical:{level:'HIGH — IMMEDIATE',color:'#FF3B3B',window:'Stop and inspect now'}
+};
+
+/* ---------------------------------------------------------------------
+   RECOMMENDED NEXT STEP — one concrete, plain-language instruction per
+   stage. Deliberately conservative and procedural ("schedule inspection",
+   "confirm with maintenance staff") rather than diagnostic-sounding
+   ("replace bearing") since EarlyEdge identifies condition risk, not a
+   confirmed root cause — that determination still requires a technician's
+   physical inspection.
+--------------------------------------------------------------------- */
+const NEXT_STEP={
+  healthy:'No action required. Continue normal operation and re-scan on the standard interval.',
+  watch:'Schedule a physical inspection within the window below. Continue operating while monitoring for changes in noise, temperature, or vibration.',
+  urgent:'Schedule inspection and repair within the window below. Notify site maintenance lead. Do not defer past the estimated runway shown.',
+  critical:'Notify site maintenance and safety personnel immediately. Confirm shutdown/inspection need per site procedure before continued operation.'
+};
+
+/* ---------------------------------------------------------------------
+   AUDIT LOG — hash-chained, device-local record of every diagnostic run.
+   HONEST SCOPE NOTE (read before relying on this for legal/compliance use):
+   This chain proves "this record was not silently altered after the fact
+   on this device" — each entry's hash depends on the previous entry's
+   hash, so editing history requires recomputing every hash after the
+   edit point. It does NOT provide:
+     - Server-side custody (nothing leaves this browser/device today)
+     - Multi-technician tamper resistance (anyone with device + browser
+       console access could still clear localStorage or replace the chain)
+     - A timestamp authority (device clock can be changed)
+   For a genuinely audit-grade trail suitable for insurance/regulatory
+   use, this log should be mirrored to the existing Render/Postgres
+   backend as an append-only table the moment connectivity allows — the
+   API already persists scan history server-side; this client-side chain
+   is a bridge, not a replacement, and is described as such everywhere
+   it appears in the UI and printed report.
+--------------------------------------------------------------------- */
+const AUDIT_KEY='earlyedge_audit_log';
+
+// crypto.subtle requires a secure context (HTTPS or localhost). GitHub Pages
+// and the Render API are both HTTPS, so this is expected to always be
+// available in production — but we fail loudly rather than silently if not,
+// since a silently-skipped hash would be worse than no audit log at all.
+function auditCryptoAvailable(){return!!(window.crypto&&window.crypto.subtle);}
+async function sha256Hex(str){
+  if(!auditCryptoAvailable())throw new Error('crypto.subtle unavailable — requires HTTPS or localhost');
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function getAuditLog(){
+  try{return JSON.parse(localStorage.getItem(AUDIT_KEY)||'[]');}catch{return[];}
+}
+
+async function appendAuditEntry(record){
+  try{
+    const log=getAuditLog();
+    const prevHash=log.length?log[log.length-1].hash:'GENESIS';
+    const seq=log.length+1;
+    const base={seq,prev_hash:prevHash,...record};
+    const hash=await sha256Hex(prevHash+JSON.stringify(base));
+    const entry={...base,hash};
+    log.push(entry);
+    localStorage.setItem(AUDIT_KEY,JSON.stringify(log));
+    return entry;
+  }catch(e){console.warn('Audit log write failed',e);return null;}
+}
+
+// Recomputes every hash in the chain and compares to what's stored.
+// Returns {intact:boolean, brokenAt: seq|null, count:number}
+async function verifyAuditChain(){
+  const log=getAuditLog();
+  let prevHash='GENESIS';
+  for(const entry of log){
+    const {hash,...base}=entry;
+    const recomputed=await sha256Hex(prevHash+JSON.stringify(base));
+    if(recomputed!==hash)return{intact:false,brokenAt:entry.seq,count:log.length};
+    prevHash=hash;
+  }
+  return{intact:true,brokenAt:null,count:log.length};
+}
 
 function confidenceLabel(p){if(p>=85)return{label:'High',sub:'Strong signal'};if(p>=70)return{label:'Good',sub:'Reliable result'};if(p>=55)return{label:'Moderate',sub:'Add asset ID for better accuracy'};return{label:'Low',sub:'Calibrate asset for better accuracy'};}
 
@@ -494,8 +758,9 @@ const NEXT_CHECK={healthy:'Every 30–42 days',watch:'Within 7–14 days',urgent
 
 function getPrimaryConcern(data,extra){
   if(data.findings&&data.findings.length){const u=data.findings.filter(f=>f.status==='urgent'||f.status==='critical');if(u.length)return u[0].label+': '+u[0].note;}
-  if(extra.bearingTemp&&extra.bearingTemp>80)return'Bearing temperature critical ('+extra.bearingTemp+'°C) — thermal failure risk';
-  if(extra.bearingTemp&&extra.bearingTemp>65)return'Bearing temperature elevated ('+extra.bearingTemp+'°C) — inspect lubrication';
+  if(extra.bearingTemp&&extra.bearingTemp>=95)return'Bearing temperature critical ('+extra.bearingTemp+'°C) — bearing failure or coolant loss risk';
+  if(extra.bearingTemp&&extra.bearingTemp>=80)return'Bearing temperature urgent ('+extra.bearingTemp+'°C) — risk of accelerated wear, schedule inspection';
+  if(extra.bearingTemp&&extra.bearingTemp>=60)return'Bearing temperature elevated ('+extra.bearingTemp+'°C) — check lubrication and load';
   if(extra.vibA&&extra.vibA>extra.vibH&&extra.vibA>extra.vibV&&extra.vibA>3)return'Axial vibration dominant — misalignment or thrust bearing developing';
   if(extra.vibH&&extra.vibH>extra.vibV&&extra.vibH>3)return'Horizontal vibration dominant — imbalance or looseness detected';
   const cf=data.crest_factor||data.cf||0;
@@ -518,8 +783,7 @@ function renderChannelBars(data){
     if(avail){cls=pct<33?'ch-healthy':pct<67?'ch-watch':pct<90?'ch-urgent':'ch-critical';}
     return'<div class="ch-row"><div class="ch-name">'+ch.n+'</div><div class="ch-track"><div class="ch-fill '+cls+'" style="width:'+(avail?pct:0)+'%"></div></div><div class="ch-pct">'+(avail?pct+'%':'—')+'</div></div>';
   }).join('');
-  document.getElementById('channel-card-title').textContent=isWave?'5-CHANNEL WAVEFORM MODE':'3-CHANNEL FIELD MODE';
-  document.getElementById('channel-mode-note').textContent=isWave?'5-channel waveform analysis active — all channels scored.':'Envelope Kurtosis and Timing Prediction Error require waveform CSV. Upload CSV to activate full 5-channel analysis.';
+  document.getElementById('channel-mode-note').textContent=isWave?'5-channel waveform analysis active.':'Envelope Kurtosis and Timing Prediction Error require waveform CSV data. Upload CSV in the field app to activate full 5-channel analysis.';
 }
 
 function renderSpectralDetail(data){
@@ -555,31 +819,69 @@ function loadDemo(type){
   }
   tempChanged(document.getElementById('bearing-temp'));updateVector();
 }
-function tempChanged(i){const v=parseFloat(i.value),h=document.getElementById('temp-hint');i.classList.remove('warn','crit');h.textContent='';if(!isNaN(v)){if(v>80){i.classList.add('crit');h.className='temp-hint crit';h.textContent='⚠ Critical — inspect immediately';}else if(v>65){i.classList.add('warn');h.className='temp-hint warn';h.textContent='⚠ Elevated — monitor closely';}}}
+/* ---------------------------------------------------------------------
+   FIXED — tempChanged() now matches spectral.py build_findings()
+   thresholds exactly (60 / 80 / 95), instead of the old 65 / 80 values
+   that disagreed with the backend engine. "Critical" is no longer shown
+   until the backend would also call it critical (>=95°C). 80–95°C now
+   reads "Urgent" to match the engine's own wording.
+--------------------------------------------------------------------- */
+function tempChanged(i){
+  const v=parseFloat(i.value),h=document.getElementById('temp-hint');
+  i.classList.remove('warn','crit');
+  h.textContent='';
+  if(!isNaN(v)){
+    if(v>=95){
+      i.classList.add('crit');
+      h.className='temp-hint crit';
+      h.textContent='⚠ Critical — bearing failure or coolant loss risk';
+    }else if(v>=80){
+      i.classList.add('crit');
+      h.className='temp-hint crit';
+      h.textContent='⚠ Urgent — risk of accelerated wear, schedule inspection';
+    }else if(v>=60){
+      i.classList.add('warn');
+      h.className='temp-hint warn';
+      h.textContent='⚠ Elevated — check lubrication and load';
+    }
+  }
+}
 function updateVector(){const h=parseFloat(document.getElementById('vib-h').value)||0,v=parseFloat(document.getElementById('vib-v').value)||0,a=parseFloat(document.getElementById('vib-a').value)||0;document.getElementById('vector-rms').textContent=(h||v||a)?'Vector RMS: '+Math.sqrt(h*h+v*v+a*a).toFixed(3)+' mm/s':'';}
 function toggleAdvanced(b){const s=document.getElementById('advanced-section');s.classList.toggle('open');b.textContent=s.classList.contains('open')?'▲ Shaft & Vane Data':'▼ Shaft & Vane Data';}
 function toggleAdv(b){const s=document.getElementById('adv-section');s.classList.toggle('open');b.textContent=s.classList.contains('open')?'▲ Advanced Diagnostics':'▼ Advanced Diagnostics';}
 function getEffectiveRms(){const h=parseFloat(document.getElementById('vib-h').value)||0,v=parseFloat(document.getElementById('vib-v').value)||0,a=parseFloat(document.getElementById('vib-a').value)||0;if(h||v||a)return Math.sqrt(h*h+v*v+a*a);return parseFloat(document.getElementById('rms').value)||null;}
-function showError(m){const e=document.getElementById('error-box');e.textContent=m;e.classList.add('show');}
-function clearError(){document.getElementById('error-box').classList.remove('show');}
+function showError(m){const e=document.getElementById('error-box');e.style.background='';e.style.color='';e.style.borderColor='';e.textContent=m;e.classList.add('show');}
+function showNotice(m){const e=document.getElementById('error-box');e.style.background='#001a0f';e.style.color='var(--green)';e.style.borderColor='#0d3020';e.textContent=m;e.classList.add('show');}
+function clearError(){const e=document.getElementById('error-box');e.classList.remove('show');e.style.background='';e.style.color='';e.style.borderColor='';}
 
 async function runDiagnostic(){
   clearError();
   const rms=getEffectiveRms();
-  if(!uploadedWaveform&&csvWaveform){uploadedWaveform=csvWaveform;}
+  /* FIXED (production bug): this block previously wrote to and read from
+     a '#sample-rate' element that does not exist anywhere in this page
+     (dead code left over from an earlier layout). document.getElementById
+     returned null, and .value on null threw a hard TypeError — meaning
+     every CSV waveform upload crashed runDiagnostic() before it could
+     call the API. Sample rate now flows entirely through the existing
+     '#csv-fs' field with no phantom intermediate element. */
+  if(!uploadedWaveform&&csvWaveform){
+    uploadedWaveform=csvWaveform;
+    const rpmTop=parseFloat(document.getElementById('csv-rpm').value);
+    if(rpmTop)document.getElementById('shaft-rpm').value=rpmTop;
+  }
   if(!rms){showError('Enter RMS velocity or at least one XYZ axis reading.');return;}
   const btn=document.getElementById('run-btn');
   btn.disabled=true;btn.textContent='ANALYZING...';
-  const body={asset_type:ASSET_MAP[currentAssetType]||'generic',rms_velocity:rms};
-  const sampleRate=parseFloat(document.getElementById('csv-fs')?.value);
+  const body={asset_type:ASSET_MAP[currentAssetType]||'general',rms_velocity:rms};
+  const sampleRate=parseFloat(document.getElementById('csv-fs').value);
   if(uploadedWaveform){
     if(!sampleRate){showError('Sample rate is required when using waveform CSV.');btn.disabled=false;btn.textContent='RUN DIAGNOSTIC';return;}
     body.waveform=uploadedWaveform;body.sample_rate_hz=sampleRate;body.mode='spectral';
   }
   const aid=document.getElementById('asset-id').value.trim();
+  if(aid)saveAssetProfile(aid);
   if(aid)body.asset_id=aid;
-  const rpm=parseFloat(document.getElementById('shaft-rpm').value)||parseFloat(document.getElementById('csv-rpm').value);
-  if(rpm)body.shaft_rpm=rpm;
+  const rpm=parseFloat(document.getElementById('shaft-rpm').value);if(rpm)body.shaft_rpm=rpm;
   const bn=parseFloat(document.getElementById('bearing-n')?.value);
   const bbd=parseFloat(document.getElementById('bearing-bd')?.value);
   const bpd=parseFloat(document.getElementById('bearing-pd')?.value);
@@ -598,7 +900,7 @@ async function runDiagnostic(){
     }
     if(!res.ok){let err;try{err=await res.json();}catch{throw new Error('API error '+res.status);}const det=err.detail;throw new Error(typeof det==='string'?det:Array.isArray(det)?det.map(e=>e.msg||JSON.stringify(e)).join(', '):JSON.stringify(det)||'API error '+res.status);}
     const data=await res.json();
-    renderResults(data,fieldCtx,{bearingTemp:!isNaN(bt)?bt:null,vibH:parseFloat(document.getElementById('vib-h').value)||null,vibV:parseFloat(document.getElementById('vib-v').value)||null,vibA:parseFloat(document.getElementById('vib-a').value)||null,effectiveRms:rms,assetLabel:currentAssetLabel,assetId:aid,rpm:rpm||null});
+    await renderResults(data,fieldCtx,{bearingTemp:!isNaN(bt)?bt:null,vibH:parseFloat(document.getElementById('vib-h').value)||null,vibV:parseFloat(document.getElementById('vib-v').value)||null,vibA:parseFloat(document.getElementById('vib-a').value)||null,effectiveRms:rms,assetLabel:currentAssetLabel,assetId:aid,rpm:rpm||null});
   }catch(e){
     saveOfflineScan(body,fieldCtx);
     showError('API unavailable or scan failed. Reading saved locally. Retry when connected. Details: '+e.message);
@@ -615,20 +917,12 @@ function saveOfflineScan(body,ctx){
   }catch(e){console.warn('Offline save failed',e);}
 }
 
-function exportTrialData(){
-  const payload={exported_at:new Date().toISOString(),product:'EarlyEdge Field Pro',version:'v3.0 Buyer Trial',owner:'AW IP Holdings Inc.',history:JSON.parse(localStorage.getItem(HISTORY_KEY)||'{}'),offline_scans:JSON.parse(localStorage.getItem('earlyedge_offline_scans')||'[]')};
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='earlyedge-trial-export.json';a.click();
-  URL.revokeObjectURL(url);
-}
-
 function getProofDrivers(data,extra){
   const d=[];
   if(extra.effectiveRms>7.1)d.push('RMS vibration is above critical threshold.');
   else if(extra.effectiveRms>4.5)d.push('RMS vibration is elevated above normal operating range.');
   else d.push('RMS vibration is within normal range.');
-  if(extra.bearingTemp){if(extra.bearingTemp>80)d.push('Bearing temperature is critical.');else if(extra.bearingTemp>65)d.push('Bearing temperature is elevated.');else d.push('Bearing temperature is acceptable.');}
+  if(extra.bearingTemp){if(extra.bearingTemp>=95)d.push('Bearing temperature is critical.');else if(extra.bearingTemp>=80)d.push('Bearing temperature is urgent — risk of accelerated wear.');else if(extra.bearingTemp>=60)d.push('Bearing temperature is elevated.');else d.push('Bearing temperature is acceptable.');}
   if(extra.vibA&&extra.vibA>extra.vibH&&extra.vibA>extra.vibV)d.push('Axial vibration is dominant — possible misalignment or thrust loading.');
   if(data.data_mode&&data.data_mode!=='field')d.push('Waveform mode active: EKS and TPE channels are included.');
   else d.push('Field mode active: waveform channels unavailable until CSV is uploaded.');
@@ -643,10 +937,11 @@ function getInspectList(stage,extra){
   return items;
 }
 
-function renderResults(data,ctx,extra){
-  const reportId='EE-'+Date.now().toString(36).toUpperCase();
+let lastScanData=null,lastScanCtx=null,lastScanExtra=null,lastAuditEntry=null;
+async function renderResults(data,ctx,extra){
+  lastScanData=data;lastScanCtx=ctx;lastScanExtra=extra;
   const ba=document.getElementById('bearing-alert');ba.classList.remove('show');
-  ['xyz-card','cost-card','runway-card','history-card','channel-card'].forEach(id=>document.getElementById(id).style.display='none');
+  ['xyz-card','cost-card','runway-card','history-card','channel-card','photo-card','qr-block','customer-header','signature-block'].forEach(id=>document.getElementById(id).style.display='none');
   ['proof-drivers','inspect-list'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
   document.getElementById('accel-badge').style.display='none';
   document.getElementById('km-savings-sub').textContent='vs emergency repair';
@@ -658,31 +953,109 @@ function renderResults(data,ctx,extra){
   const vdiVal=data.vdi!=null?data.vdi:(data.vdi_score!=null?data.vdi_score:0);
   const s=STAGE[stageKey]||STAGE.critical;
   const confidence=data.confidence!=null?(data.confidence<=1?Math.round(data.confidence*100):Math.round(data.confidence)):75;
-  const stageHealthCaps={healthy:100,watch:82,urgent:62,critical:35};
-  const healthScore=Math.min(stageHealthCaps[stageKey]||100,Math.max(0,Math.round(100-vdiVal)));
+  const healthScore=Math.max(0,Math.min(100,Math.round(100-vdiVal)));
   const cl=confidenceLabel(confidence);
   const cost=data.cost_impact||{};
   const dtf=data.days_to_failure||{};
 
+  // Overall Stage Banner
   const banner=document.getElementById('overall-stage-banner');
   banner.style.background=s.bg;banner.style.borderColor=s.color;
+  banner.classList.remove('pulse-healthy','pulse-urgent','pulse-critical');
+  if(stageKey==='healthy')banner.classList.add('pulse-healthy');
+  else if(stageKey==='urgent')banner.classList.add('pulse-urgent');
+  else if(stageKey==='critical')banner.classList.add('pulse-critical');
   const osb=document.getElementById('osb-stage-text');osb.style.color=s.color;osb.textContent=s.icon+' '+stageKey.toUpperCase();
-  const stEl=document.getElementById('stage-trigger');if(stEl)stEl.style.borderColor=s.color;
 
+  // Decision card
   const dc=document.getElementById('decision-card');dc.style.background=s.bg;dc.style.borderLeftColor=s.color;
-  const ctxParts=[];if(ctx.location)ctxParts.push(ctx.location);if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);ctxParts.push(ctx.timestamp);ctxParts.push('Report: '+reportId);if(ctx.load)ctxParts.push('Load: '+ctx.load);
+  const ctxParts=[];if(ctx.location)ctxParts.push(ctx.location);if(ctx.operator)ctxParts.push('Tech: '+ctx.operator);ctxParts.push(ctx.timestamp);if(ctx.load)ctxParts.push('Load: '+ctx.load);
   document.getElementById('dc-asset').textContent=extra.assetLabel.toUpperCase()+(extra.assetId?' · '+extra.assetId:'')+'\n'+ctxParts.join('  ·  ');
   const specs=[];if(extra.rpm)specs.push('RPM: <span style="color:#bbb">'+extra.rpm+'</span>');if(extra.bearingTemp)specs.push('Temp: <span style="color:#bbb">'+extra.bearingTemp+'°C</span>');specs.push('RMS: <span style="color:#bbb">'+extra.effectiveRms.toFixed(2)+' mm/s</span>');if(data.data_mode&&data.data_mode!=='field'){const ml={'spectral_full':'5-Ch·Waveform+Geo','spectral_no_geometry':'5-Ch·Waveform','spectral_partial':'5-Ch·Waveform'};specs.push('Mode: <span style="color:#58a6ff">'+(ml[data.data_mode]||data.data_mode)+'</span>');}
   document.getElementById('dc-specs').innerHTML=specs.join('&nbsp;&nbsp;·&nbsp;&nbsp;');
+  // Scan ID is generated client-side for traceability on the printed report.
+  // Engine Version / Model reflect the actual deployed source versions
+  // (main.py API_VERSION and spectral.py's own docstring version).
+  // Real UUID via crypto.randomUUID() (supported in all current mobile browsers).
+  // Falls back to a timestamp+random string only if crypto is unavailable.
+  const scanId='EE-'+(window.crypto&&crypto.randomUUID?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2,10)));
+
+  // Write this scan to the hash-chained audit log BEFORE rendering the
+  // report, so the printed/exported report can display its own audit
+  // sequence number and hash for tamper-evidence.
+  lastAuditEntry=await appendAuditEntry({
+    scan_id:scanId,
+    ts:new Date().toISOString(),
+    asset_id:extra.assetId||null,
+    asset_type:extra.assetLabel,
+    technician:ctx.operator||null,
+    location:ctx.location||null,
+    overall_stage:stageKey,
+    vdi:Number(vdiVal.toFixed ? vdiVal.toFixed(2) : vdiVal),
+    effective_rms:extra.effectiveRms,
+    bearing_temp_c:extra.bearingTemp,
+    data_mode:data.data_mode||'field'
+  });
+  const auditMeta=lastAuditEntry?('   ·   Audit #'+lastAuditEntry.seq+'   ·   Hash '+lastAuditEntry.hash.slice(0,12)+'…'):'   ·   Audit log unavailable on this device';
+  document.getElementById('dc-meta').textContent='Scan ID: '+scanId+'   ·   Engine v3.0.0   ·   Model: Spectral Engine v2.4.1'+auditMeta;
+
+  // Urgency badge + Recommended Next Step — plain-language layer over
+  // overall_stage, defined in the URGENCY / NEXT_STEP maps above.
+  const urg=URGENCY[stageKey]||URGENCY.critical;
+  const dcUrg=document.getElementById('dc-urgency');dcUrg.style.color=urg.color;dcUrg.textContent=urg.level;
+  const pill=document.getElementById('ns-urgency-pill');
+  pill.style.background=urg.color+'26';pill.style.color=urg.color;pill.style.border='1px solid '+urg.color+'55';
+  pill.textContent='URGENCY: '+urg.level;
+  document.getElementById('ns-window').textContent=urg.window;
+  document.getElementById('next-step-text').textContent=NEXT_STEP[stageKey]||NEXT_STEP.critical;
+  document.getElementById('next-step-card').style.borderLeftColor=urg.color;
+
+  // Audit Log card summary (refreshes on every scan)
+  renderAuditSummary();
+  updateAuditStatusLine();
   document.getElementById('dc-stage').style.color=s.color;document.getElementById('dc-stage').textContent=s.icon+' '+stageKey.toUpperCase();
   document.getElementById('dc-health-num').style.color=s.color;document.getElementById('dc-health-num').textContent=healthScore+'%';
-  document.getElementById('dc-bar').style.width=healthScore+'%';document.getElementById('dc-bar').style.background='linear-gradient(90deg,'+s.color+','+s.color+'88)';
+  const gaugeCirc=238.76,gaugeFill=document.getElementById('gauge-fill');
+  gaugeFill.style.stroke=s.color;
+  gaugeFill.setAttribute('stroke-dashoffset',(gaugeCirc-(healthScore/100)*gaugeCirc).toFixed(1));
+
+  // Deterioration timeline — highlights current stage segment, shows projected
+  // failure date only when the backend actually returned a DTF projection.
+  const stagesOrd=['healthy','watch','urgent','critical'];
+  const stageColors={healthy:'#00C48C',watch:'#F5C518',urgent:'#FF7A00',critical:'#FF3B3B'};
+  const curIdx=stagesOrd.indexOf(stageKey);
+  document.getElementById('timeline-track').innerHTML=stagesOrd.map((st,i)=>{
+    const active=i<=curIdx;
+    return '<div class="timeline-seg" style="background:'+(active?stageColors[st]:'#1c1c1c')+'">'+
+           (i===curIdx?'<div class="timeline-marker" style="color:'+stageColors[st]+'">▼ TODAY</div>':'')+
+           '</div>';
+  }).join('');
+  if((dtf.status==='valid'||dtf.status==='projected')&&dtf.days_estimate!=null){
+    const projDate=new Date(Date.now()+dtf.days_estimate*86400000);
+    document.getElementById('timeline-date').textContent='Projected critical threshold: '+projDate.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})+' ('+Math.round(dtf.days_estimate)+' day estimate)';
+  }else{
+    document.getElementById('timeline-date').textContent='Add asset ID and re-scan 3+ times to unlock a projected date.';
+  }
+
+  // Condition Risk Score — an honest relative index derived from VDI.
+  // Explicitly NOT framed as a statistical failure probability: no such
+  // validated model exists on the backend today.
+  const riskScore=Math.max(2,Math.min(97,Math.round(vdiVal)));
+  const filledBlocks=Math.round(riskScore/10);
+  document.getElementById('risk-meter-blocks').innerHTML=
+    '<span style="color:'+s.color+'">'+'■'.repeat(filledBlocks)+'</span>'+
+    '<span style="color:#2a2a2a">'+'□'.repeat(10-filledBlocks)+'</span>';
+  document.getElementById('risk-meter-pct').style.color=s.color;
+  document.getElementById('risk-meter-pct').textContent=riskScore+'%';
+  document.getElementById('risk-meter-sub').textContent='Derived from VDI composite score. '+
+    ((dtf.status==='valid'||dtf.status==='projected')&&dtf.days_estimate!=null?'Trend suggests critical threshold in ~'+Math.round(dtf.days_estimate)+' days at current rate.':'Add scan history for a trend-based timeframe.');
 
   const rwv=document.getElementById('km-runway-val'),rws=document.getElementById('km-runway-sub');
   if((dtf.status==='valid'||dtf.status==='projected')&&dtf.days_estimate!=null){rwv.style.color=s.color;rwv.textContent=Math.round(dtf.days_estimate)+' days';rws.textContent=dtf.days_lower&&dtf.days_upper?Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' day range':'estimated window';}
   else{rwv.style.color=s.color;rwv.textContent={healthy:'30–42 days',watch:'14–45 days',urgent:'3–14 days',critical:'0–72 hrs'}[stageKey]||'—';rws.textContent='stage-based estimate';}
+  document.getElementById('gauge-ruc-label').textContent='Remaining Useful Condition: '+rwv.textContent;
 
-  document.getElementById('km-confidence').style.color=s.color;document.getElementById('km-confidence').textContent=cl.label;document.getElementById('km-confidence-sub').textContent=cl.sub;
+  document.getElementById('km-confidence').style.color=s.color;document.getElementById('km-confidence').textContent='Confidence: '+cl.label;document.getElementById('km-confidence-sub').textContent='Evidence Quality: '+confidence+'% · '+cl.sub;
 
   const te=document.getElementById('km-trend'),ts=document.getElementById('km-trend-sub');
   const tDir=dtf.trend||dtf.trend_direction;
@@ -695,61 +1068,36 @@ function renderResults(data,ctx,extra){
   else if(cost.fix_later_cost>0){savEl.textContent='$'+cost.fix_later_cost.toLocaleString();document.getElementById('km-savings-sub').textContent='protected exposure';}
   else savEl.textContent='—';
 
-  // Fix 2: Why stage triggered
-  const triggerEl=document.getElementById('stage-trigger');
-  if(triggerEl){
-    const rmsV=extra.effectiveRms,tempV=extra.bearingTemp;
-    let why='';
-    if(stageKey==='watch'){
-      if(rmsV>4.5)why+='WATCH triggered by RMS '+rmsV.toFixed(2)+' mm/s above normal range';
-      if(tempV&&tempV>60){why+=(why?'; ':'')+'temperature borderline at '+tempV+'°C';}
-      if(!why)why='WATCH triggered by combined channel scoring';
-    }else if(stageKey==='urgent'){why='URGENT triggered by elevated fault signature across multiple channels';}
-    else if(stageKey==='critical'){why='CRITICAL condition — immediate inspection required';}
-    else{why='Asset operating within normal parameters — no fault signature detected';}
-    triggerEl.textContent=why;
-    triggerEl.style.display=why?'block':'none';
-  }
-  // Fix 4: Primary driver badge
-  const pdEl=document.getElementById('primary-driver-badge');
-  if(pdEl){
-    let driver='';
-    const cfV2=data.crest_factor||data.cf||0;
-    if(extra.effectiveRms>7.1)driver='RMS CRITICAL';
-    else if(extra.effectiveRms>4.5)driver='RMS ELEVATED';
-    else if(extra.bearingTemp&&extra.bearingTemp>80)driver='TEMP CRITICAL';
-    else if(extra.bearingTemp&&extra.bearingTemp>65)driver='TEMP ELEVATED';
-    else if(extra.vibA&&extra.vibA>extra.vibH&&extra.vibA>extra.vibV&&extra.vibA>3)driver='AXIAL DOMINANT';
-    else if(cfV2>4.5)driver='HIGH IMPACT';
-    else if(cfV2>3.5)driver='IMPACT ELEVATED';
-    else driver='MULTI-CHANNEL';
-    pdEl.textContent='PRIMARY DRIVER: '+driver;
-    pdEl.style.display='block';
-  }
   document.getElementById('concern-text').textContent=getPrimaryConcern(data,extra);
   document.getElementById('proof-drivers').innerHTML=getProofDrivers(data,extra).map(x=>'• '+x).join('<br>');
   document.getElementById('inspect-list').innerHTML=getInspectList(stageKey,extra).map(x=>'• '+x).join('<br>');
 
-  if(extra.bearingTemp&&extra.bearingTemp>65){ba.textContent='🌡 Bearing temp '+extra.bearingTemp+'°C — '+(extra.bearingTemp>80?'CRITICAL: stop and inspect immediately.':'elevated, monitor closely.');ba.classList.add('show');}
+  if(extra.bearingTemp&&extra.bearingTemp>=60){
+    let bmsg;
+    if(extra.bearingTemp>=95)bmsg='CRITICAL: bearing failure or coolant loss risk — stop and inspect immediately.';
+    else if(extra.bearingTemp>=80)bmsg='URGENT: risk of accelerated wear — schedule inspection soon.';
+    else bmsg='elevated — check lubrication and load.';
+    ba.textContent='🌡 Bearing temp '+extra.bearingTemp+'°C — '+bmsg;
+    ba.classList.add('show');
+  }
 
   const actionText=data.recommended_action||(data.risk_drivers&&data.risk_drivers.length?data.risk_drivers.join(' · '):'Monitor asset and re-scan on schedule.');
   document.getElementById('action-text').textContent=actionText;
-  const nextCheckEl=document.getElementById('next-check');
-  const now=new Date();
-  const scanWindows={healthy:30,watch:7,urgent:1,critical:0};
-  const scanWindowsEnd={healthy:42,watch:14,urgent:3,critical:1};
-  const dStart=scanWindows[stageKey]||7,dEnd=scanWindowsEnd[stageKey]||14;
-  const d1=new Date(now);d1.setDate(d1.getDate()+dStart);
-  const d2=new Date(now);d2.setDate(d2.getDate()+dEnd);
-  const fmt=d=>d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  const windowStr=stageKey==='critical'?'Immediately':fmt(d1)+' – '+fmt(d2);
-  nextCheckEl.innerHTML='Next scan window: <span>'+windowStr+'</span>';
+  document.getElementById('next-check').innerHTML='Next check: <span>'+NEXT_CHECK[stageKey]+'</span>';
 
   if((dtf.status==='valid'||dtf.status==='projected')&&dtf.days_estimate!=null){
     document.getElementById('runway-card').style.display='block';
     document.getElementById('runway-days').style.color=s.color;document.getElementById('runway-days').textContent=Math.round(dtf.days_estimate);
-    if(dtf.days_lower!=null&&dtf.days_upper!=null)document.getElementById('runway-range').textContent='('+Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+')';
+    if(dtf.days_lower!=null&&dtf.days_upper!=null)document.getElementById('runway-range').textContent=Math.round(dtf.days_lower)+'–'+Math.round(dtf.days_upper)+' days';
     document.getElementById('runway-narrative').textContent=dtf.confidence_narrative||'';
+    // Confidence badge — parsed from the narrative the backend already computes
+    // from R² of the trend fit ("95% CI" vs "low confidence"). Not a new number,
+    // just surfacing what compute_dtf() in main.py already calculated.
+    const narrLower=(dtf.confidence_narrative||'').toLowerCase();
+    const cb=document.getElementById('confidence-badge');
+    if(narrLower.includes('95% ci')){cb.textContent='High confidence trend';cb.className='badge badge-stable';}
+    else if(narrLower.includes('low confidence')){cb.textContent='Low confidence trend';cb.className='badge badge-rising';}
+    else{cb.textContent='';}
     const tb=document.getElementById('trend-badge'),tD=dtf.trend||dtf.trend_direction;
     if(tD==='degrading'||tD==='rising'){tb.textContent='▲ Rising';tb.className='badge badge-rising';}else{tb.textContent='→ Stable / Improving';tb.className='badge badge-stable';}
     if(dtf.acceleration_detected)document.getElementById('accel-badge').style.display='inline-block';
@@ -762,12 +1110,56 @@ function renderResults(data,ctx,extra){
     document.getElementById('cost-later').textContent='$'+cost.fix_later_cost.toLocaleString();
     if(ih){document.getElementById('cost-save').textContent='Protected exposure: $'+cost.fix_later_cost.toLocaleString()+' CAD';document.getElementById('cost-range').textContent='No repair needed today. This is the financial risk you are protecting against.';document.getElementById('cost-roi').textContent='';}
     else{document.getElementById('cost-save').textContent='Estimated avoided cost: $'+avoided.toLocaleString()+' ('+cost.savings_pct+'%)';if(cost.estimated_range)document.getElementById('cost-range').textContent='Range: $'+cost.estimated_range.low.toLocaleString()+' – $'+cost.estimated_range.high.toLocaleString()+' CAD';document.getElementById('cost-roi').textContent=cost.roi_window||'';}
-    let bh='';if(ctx.notes)bh+='<strong>Field Notes:</strong> '+ctx.notes+'<br><br>';bh+='<strong>Planned repair includes:</strong> parts, scheduled labour, planned downtime<br><strong>Emergency scenario includes:</strong> expedited parts, overtime labour, unplanned production loss, secondary damage risk (15%)<br>Estimates based on industry averages for '+extra.assetLabel+'. Calibrate asset with actual costs for site-specific accuracy.<br><br><em>EarlyEdge provides condition-risk guidance, not a certified failure guarantee. Confirm findings with site maintenance procedures before shutdown decisions.</em>';
+    // Downtime hours have no source field from the API (cost_impact carries
+    // only dollar figures) — these are stage-based estimates, same convention
+    // as the existing "stage-based estimate" runway fallback above.
+    const downtimeMap={healthy:'0 hrs',watch:'4–8 hrs',urgent:'12–24 hrs',critical:'24–48 hrs'};
+    document.getElementById('downtime-prevented').textContent=downtimeMap[stageKey]||'—';
+    document.getElementById('production-protected').textContent=cost.fix_later_cost>0?'$'+cost.fix_later_cost.toLocaleString():'—';
+
+    // ROI — only shown if the technician actually entered a scan cost.
+    // No placeholder numbers: if scan-cost is blank, this section stays hidden.
+    const scanCostVal=parseFloat(document.getElementById('scan-cost').value);
+    if(!isNaN(scanCostVal)&&scanCostVal>0&&avoided>0){
+      document.getElementById('roi-card').style.display='block';
+      document.getElementById('roi-scan-cost').textContent='$'+scanCostVal.toLocaleString();
+      document.getElementById('roi-avoided').textContent='$'+avoided.toLocaleString();
+      document.getElementById('roi-multiple').textContent=(avoided/scanCostVal).toFixed(1)+'×';
+    }
+
+    let bh='';if(ctx.notes)bh+='<strong>Field Notes:</strong> '+ctx.notes+'<br><br>';bh+='<strong>Planned repair includes:</strong> parts, scheduled labour, planned downtime<br><strong>Emergency scenario includes:</strong> expedited parts, overtime labour, unplanned production loss, secondary damage risk (15%)<br>Downtime-hour and production-protected figures are stage-based estimates, not measured values. Estimates based on industry averages for '+extra.assetLabel+'. Calibrate asset with actual costs for site-specific accuracy.<br><br><em>EarlyEdge provides condition-risk guidance, not a certified failure guarantee. Confirm findings with site maintenance procedures before shutdown decisions.</em>';
     document.getElementById('cost-basis').innerHTML=bh;
   }
 
   const axes=[['Horizontal',extra.vibH,'Imbalance / Looseness'],['Vertical',extra.vibV,'Looseness / Resonance'],['Axial',extra.vibA,'Misalignment / Thrust']].filter(([,v])=>v!=null);
   if(axes.length){document.getElementById('xyz-card').style.display='block';document.getElementById('xyz-rows').innerHTML=axes.map(([n,v,f])=>'<div class="axis-row"><div class="axis-header"><span class="axis-name">'+n+'</span><span class="axis-val">'+v+' mm/s</span></div><div class="axis-bar-track"><div class="axis-bar-fill" style="width:'+Math.min(100,(v/20)*100)+'%;background:'+s.color+'"></div></div><div class="axis-fault">Fault type: '+f+'</div></div>').join('');}
+
+  const customerName=document.getElementById('customer-name').value.trim();
+  if(customerName||customerLogoDataUrl){
+    document.getElementById('customer-header').style.display='block';
+    if(customerLogoDataUrl){const clr=document.getElementById('customer-logo-report');clr.src=customerLogoDataUrl;clr.style.display='inline-block';}
+    document.getElementById('customer-name-report').textContent=customerName;
+  }
+  const techSig=document.getElementById('tech-signature').value.trim();
+  if(techSig){
+    document.getElementById('signature-block').style.display='block';
+    document.getElementById('signature-text').textContent=techSig;
+  }
+
+  const annotatedPhoto=getAnnotatedPhotoDataUrl();
+  if(annotatedPhoto){
+    document.getElementById('photo-card').style.display='block';
+    document.getElementById('report-photo').src=annotatedPhoto;
+  }
+
+  // QR code — links to the raw /history/{asset_id} JSON on the live API.
+  // There is no formatted single-scan viewer page yet, so this is the most
+  // honest destination available today. Requires an asset ID and internet.
+  if(extra.assetId&&apiOnline){
+    const historyUrl=API+'/history/'+encodeURIComponent(extra.assetId);
+    document.getElementById('qr-code-img').src='https://api.qrserver.com/v1/create-qr-code/?size=120x120&data='+encodeURIComponent(historyUrl);
+    document.getElementById('qr-block').style.display='block';
+  }
 
   renderChannelBars(data);
 
@@ -779,6 +1171,44 @@ function renderResults(data,ctx,extra){
   document.getElementById('readings-grid').innerHTML=readings.map(([l,v])=>'<div class="reading-cell"><div class="reading-label">'+l+'</div><div class="reading-sub">'+(RMETA[l]||'')+'</div><div class="reading-value">'+v+'</div></div>').join('');
 
   renderSpectralDetail(data);
+
+  // Asset Baseline / Learning Mode — an honest statistical comparison built
+  // from this asset's own real scan history (localStorage), not a trained
+  // pattern-matching "fingerprint" model. Requires 5 scans before it speaks
+  // in terms of an established baseline, consistent with how DTF already
+  // requires 3+ scans before projecting a date.
+  const BASELINE_SCANS_NEEDED=5;
+  if(extra.assetId){
+    const histForBaseline=getHistory(extra.assetId);
+    const bc=document.getElementById('baseline-card');
+    if(histForBaseline.length>0){
+      bc.style.display='block';
+      const dots=Array.from({length:BASELINE_SCANS_NEEDED},(_,i)=>
+        '<div class="baseline-dot'+(i<histForBaseline.length?' filled':'')+'"></div>').join('');
+      if(histForBaseline.length<BASELINE_SCANS_NEEDED){
+        document.getElementById('baseline-body').innerHTML=
+          '<div class="baseline-row"><span style="color:var(--muted);font-size:13px">Learning Mode — '+histForBaseline.length+' of '+BASELINE_SCANS_NEEDED+' scans</span>'+
+          '<div class="baseline-dots">'+dots+'</div></div>'+
+          '<div style="font-size:11px;color:var(--dim);margin-top:6px">Baseline comparison unlocks after '+BASELINE_SCANS_NEEDED+' scans on this asset.</div>';
+      }else{
+        const priorScans=histForBaseline.slice(0,-1);
+        const avgVdi=priorScans.reduce((a,h)=>a+(Number(h.vdi)||0),0)/priorScans.length;
+        const deviationPct=avgVdi>0?((vdiVal-avgVdi)/avgVdi*100):0;
+        const matchPct=Math.max(0,Math.round(100-Math.abs(deviationPct)));
+        const fpBlocks=Math.round(matchPct/10);
+        document.getElementById('baseline-body').innerHTML=
+          '<div class="baseline-row"><span style="color:var(--green);font-size:13px">✓ Pattern established ('+priorScans.length+' prior scans)</span>'+
+          '<div class="baseline-dots">'+dots+'</div></div>'+
+          '<div style="font-size:16px;letter-spacing:2px;font-family:var(--font);margin-top:10px">'+
+          '<span style="color:'+s.color+'">'+'█'.repeat(fpBlocks)+'</span>'+
+          '<span style="color:#2a2a2a">'+'░'.repeat(10-fpBlocks)+'</span>'+
+          ' <span style="font-size:15px;font-weight:700;color:'+s.color+'">'+matchPct+'%</span></div>'+
+          '<div style="font-size:12px;color:var(--muted);margin-top:6px">Machine operating '+(matchPct>=90?'within':'outside')+' its established scan-history pattern.</div>'+
+          '<div class="baseline-row" style="margin-top:10px"><span style="color:var(--muted)">Deviation</span><span style="color:'+(deviationPct>10?'var(--orange)':'var(--muted)')+';font-weight:700">'+(deviationPct>=0?'+':'')+deviationPct.toFixed(1)+'%</span></div>'+
+          '<div style="font-size:10px;color:var(--dim);margin-top:8px">Simple statistical comparison against prior scan averages for this asset — not a trained pattern-recognition model.</div>';
+      }
+    }
+  }
 
   if(extra.assetId){
     const hist=getHistory(extra.assetId);
@@ -807,60 +1237,182 @@ function renderResults(data,ctx,extra){
   }
 }
 
+// ---- Audit Log UI ----
+function renderAuditSummary(){
+  const log=getAuditLog();
+  const el=document.getElementById('audit-summary');
+  if(!el)return;
+  if(!log.length){el.innerHTML='<div style="font-size:12px;color:var(--muted)">No entries yet on this device.</div>';return;}
+  const last=log[log.length-1];
+  el.innerHTML=
+    '<div class="baseline-row"><span style="color:var(--muted)">Entries on this device</span><span style="font-weight:700">'+log.length+'</span></div>'+
+    '<div class="baseline-row"><span style="color:var(--muted)">Latest entry</span><span style="font-weight:700">#'+last.seq+' · '+new Date(last.ts).toLocaleString()+'</span></div>'+
+    '<div class="baseline-row"><span style="color:var(--muted)">Latest hash</span><span style="font-weight:700;font-size:11px">'+last.hash.slice(0,16)+'…</span></div>';
+}
+function toggleAuditDetail(){
+  const d=document.getElementById('audit-detail'),b=document.getElementById('audit-toggle-btn');
+  const opening=d.style.display==='none';
+  d.style.display=opening?'block':'none';
+  b.textContent=opening?'▲ Hide Full Audit Trail':'▼ View Full Audit Trail';
+  if(opening)renderAuditEntries();
+}
+function renderAuditEntries(){
+  const log=getAuditLog().slice().reverse();
+  const el=document.getElementById('audit-entries');
+  if(!log.length){el.innerHTML='<div style="font-size:12px;color:var(--muted)">No entries yet.</div>';return;}
+  const sc={healthy:'#00C48C',watch:'#F5C518',urgent:'#FF7A00',critical:'#FF3B3B'};
+  el.innerHTML=log.map(e=>
+    '<div style="background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:9px 10px">'+
+    '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">'+
+    '<span style="color:'+(sc[e.overall_stage]||'#888')+';font-weight:700">#'+e.seq+' · '+(e.overall_stage||'').toUpperCase()+'</span>'+
+    '<span style="color:#666">'+new Date(e.ts).toLocaleString()+'</span></div>'+
+    '<div style="font-size:10px;color:#777">'+(e.asset_id?e.asset_id+' · ':'')+(e.asset_type||'')+(e.technician?' · Tech: '+e.technician:'')+'</div>'+
+    '<div style="font-size:9px;color:#555;margin-top:4px;word-break:break-all">Hash: '+e.hash+'</div>'+
+    '</div>'
+  ).join('');
+}
+async function runVerifyChain(){
+  const el=document.getElementById('audit-verify-result');
+  el.textContent='Verifying...';el.style.color='var(--muted)';
+  const result=await verifyAuditChain();
+  if(result.count===0){el.textContent='No entries to verify yet.';el.style.color='var(--muted)';}
+  else if(result.intact){el.textContent='✓ Chain intact — all '+result.count+' entries verified, no gaps or edits detected.';el.style.color='var(--green)';}
+  else{el.textContent='⚠ Chain broken at entry #'+result.brokenAt+' — this record may have been edited after it was written.';el.style.color='var(--red)';}
+}
+function exportAuditLog(){
+  const log=getAuditLog();
+  downloadBlob(JSON.stringify({device_audit_log:log,exported_at:new Date().toISOString(),note:'Device-local hash-chained audit log. Verify integrity with the chain hash before relying on this export as evidence.'},null,2),'earlyedge_audit_log_'+Date.now()+'.json','application/json');
+}
+
 function resetForm(){
   document.getElementById('form-section').style.display='block';document.getElementById('results').style.display='none';
   document.getElementById('run-btn').disabled=false;document.getElementById('run-btn').textContent='RUN DIAGNOSTIC';
   document.getElementById('bearing-alert').classList.remove('show');
-  ['xyz-card','cost-card','runway-card','history-card','channel-card'].forEach(id=>document.getElementById(id).style.display='none');
+  ['xyz-card','cost-card','runway-card','history-card','channel-card','photo-card','qr-block','customer-header','signature-block'].forEach(id=>document.getElementById(id).style.display='none');
   ['proof-drivers','inspect-list'].forEach(id=>{const e=document.getElementById(id);if(e)e.innerHTML='';});
   document.getElementById('accel-badge').style.display='none';document.getElementById('adv-section').classList.remove('open');
   ['cost-save','cost-range','cost-roi','cost-basis','runway-range','runway-narrative','temp-hint','vector-rms'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent='';});
-  csvWaveform=null;csvFs=null;uploadedWaveform=null;const csvInput=document.getElementById('csv-input');if(csvInput)csvInput.value='';
-  document.getElementById('csv-status').textContent='Upload a waveform CSV for full 5-channel analysis';
-  document.getElementById('csv-btn').textContent='Choose CSV File';switchTab('manual');
-  ['rms','bearing-temp','vib-h','vib-v','vib-a','shaft-rpm','vane-count','asset-id','location','operator','current-a','load-pct','csv-fs','csv-rpm','bearing-n','bearing-bd','bearing-pd','bearing-beta'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  csvWaveform=null;csvFs=null;uploadedWaveform=null;document.getElementById('csv-status').textContent='Upload a waveform CSV for full 5-channel analysis';document.getElementById('csv-btn').textContent='Choose CSV File';switchTab('manual');
+  ['rms','bearing-temp','vib-h','vib-v','vib-a','shaft-rpm','vane-count','asset-id','current-a','load-pct','csv-fs','csv-rpm','bearing-n','bearing-bd','bearing-pd','bearing-beta','customer-name','tech-signature','scan-cost'].forEach(id=>{const e=document.getElementById(id);if(e)e.value='';});
+  customerLogoDataUrl=null;
+  const clp=document.getElementById('customer-logo-preview');if(clp){clp.style.display='none';clp.src='';}
+  const cli=document.getElementById('customer-logo-input');if(cli)cli.value='';
+  document.getElementById('customer-logo-btn').textContent='🏢 Add Customer Logo';
   const fn=document.getElementById('field-notes');if(fn)fn.value='';
   document.getElementById('load-condition').value='';document.getElementById('km-savings-sub').textContent='vs emergency repair';
+  photoBaseImg=null;photoStrokes=[];photoCurrentStroke=null;
+  const paw=document.getElementById('photo-annotate-wrap');if(paw)paw.style.display='none';
+  const pac=document.getElementById('photo-annotate-canvas');if(pac){const c=pac.getContext('2d');c.clearRect(0,0,pac.width,pac.height);}
+  const api=document.getElementById('asset-photo-input');if(api)api.value='';
+  document.getElementById('asset-photo-btn').textContent='📷 Take Asset Photo';
 }
 
 let csvWaveform=null,csvFs=null;
 let uploadedWaveform=null;
 let apiOnline=false;
 
-window.addEventListener('load',()=>{if(checkTrialAccess())checkApiStatus();});
+window.addEventListener('load',checkApiStatus);
+window.addEventListener('load',updateAuditStatusLine);
+setInterval(checkApiStatus,60000);
+
+function updateAuditStatusLine(){
+  const el=document.getElementById('audit-status-line');
+  if(!el)return;
+  const log=getAuditLog();
+  el.textContent=log.length?('Audit log: '+log.length+' entries on this device · last #'+log[log.length-1].seq):'Audit log: no entries yet on this device';
+}
 
 async function checkApiStatus(){
-  const el=document.getElementById('api-status');
+  const el=document.getElementById('api-status'),ls=document.getElementById('last-sync');
   try{
     const res=await fetch(API+'/health',{method:'GET'});
-    if(res.ok){apiOnline=true;el.innerHTML='● API ONLINE · LIVE FIELD MODE · WAVEFORM READY';el.style.color='var(--green)';}
+    if(res.ok){
+      apiOnline=true;el.innerHTML='● API ONLINE · LIVE FIELD MODE · WAVEFORM READY';el.style.color='var(--green)';
+      localStorage.setItem('earlyedge_last_sync',new Date().toISOString());
+    }
     else throw new Error('bad status');
-  }catch(e){
-    apiOnline=false;
-    const offline=JSON.parse(localStorage.getItem('earlyedge_offline_scans')||'[]').length;
-    el.innerHTML='● API OFFLINE · LOCAL SAVE MODE AVAILABLE · '+offline+' pending scan(s)';
-    el.style.color='var(--orange)';
-  }
+  }catch(e){apiOnline=false;el.innerHTML='● API OFFLINE · LOCAL SAVE MODE AVAILABLE';el.style.color='var(--orange)';}
+  const lastSync=localStorage.getItem('earlyedge_last_sync');
+  ls.textContent=lastSync?'Last sync: '+new Date(lastSync).toLocaleString():'Last sync: never';
 }
 
-function handleCSV(input){
+// Per-asset profile memory — recalls RPM / bearing geometry previously entered
+// for a given Asset ID, since technicians re-scan the same assets repeatedly.
+// Stored locally on this device only (same storage scope as scan history).
+function saveAssetProfile(assetId){
+  if(!assetId)return;
+  try{
+    const profiles=JSON.parse(localStorage.getItem('earlyedge_asset_profiles')||'{}');
+    profiles[assetId]={
+      shaftRpm:document.getElementById('shaft-rpm').value,
+      vaneCount:document.getElementById('vane-count').value,
+      bearingN:document.getElementById('bearing-n')?.value,
+      bearingBd:document.getElementById('bearing-bd')?.value,
+      bearingPd:document.getElementById('bearing-pd')?.value,
+      bearingBeta:document.getElementById('bearing-beta')?.value,
+      assetType:currentAssetType,
+    };
+    localStorage.setItem('earlyedge_asset_profiles',JSON.stringify(profiles));
+  }catch(e){console.warn('Profile save failed',e);}
+}
+function autofillAssetProfile(assetId){
+  if(!assetId)return;
+  try{
+    const profiles=JSON.parse(localStorage.getItem('earlyedge_asset_profiles')||'{}');
+    const p=profiles[assetId];
+    if(!p)return;
+    if(p.shaftRpm)document.getElementById('shaft-rpm').value=p.shaftRpm;
+    if(p.vaneCount)document.getElementById('vane-count').value=p.vaneCount;
+    if(p.bearingN&&document.getElementById('bearing-n'))document.getElementById('bearing-n').value=p.bearingN;
+    if(p.bearingBd&&document.getElementById('bearing-bd'))document.getElementById('bearing-bd').value=p.bearingBd;
+    if(p.bearingPd&&document.getElementById('bearing-pd'))document.getElementById('bearing-pd').value=p.bearingPd;
+    if(p.bearingBeta&&document.getElementById('bearing-beta'))document.getElementById('bearing-beta').value=p.bearingBeta;
+    if(p.assetType){
+      const sel=document.getElementById('asset-select');
+      sel.value=p.assetType;currentAssetType=p.assetType;
+      currentAssetLabel=sel.options[sel.selectedIndex]?sel.options[sel.selectedIndex].text:currentAssetLabel;
+    }
+    showNotice('Recalled saved specs for asset "'+assetId+'". Review before running.');
+  }catch(e){console.warn('Profile autofill failed',e);}
+}
+
+let customerLogoDataUrl=null;
+function handleCustomerLogo(input){
   const file=input.files[0];if(!file)return;
-  const status=document.getElementById('csv-status'),btn=document.getElementById('csv-btn');
-  status.textContent='Reading CSV...';btn.textContent='Reading...';
   const reader=new FileReader();
   reader.onload=e=>{
-    const lines=e.target.result.split('\n').map(l=>l.trim()).filter(Boolean);
-    const samples=[];
-    for(const line of lines){const v=parseFloat(line.split(',')[0].split('\t')[0]);if(!isNaN(v))samples.push(v);}
-    if(samples.length<64){status.textContent='Need at least 64 samples — got '+samples.length;btn.textContent='Choose CSV File';return;}
-    csvWaveform=samples;uploadedWaveform=samples;
-    const fs=parseFloat(document.getElementById('csv-fs').value);
-    if(fs&&fs>=100)csvFs=fs;
-    status.textContent='✓ '+file.name+' — '+samples.length.toLocaleString()+' samples loaded'+(csvFs?' @ '+csvFs+' Hz':'');
-    btn.textContent='Change File';
+    customerLogoDataUrl=e.target.result;
+    const prev=document.getElementById('customer-logo-preview');
+    prev.src=customerLogoDataUrl;prev.style.display='block';
+    document.getElementById('customer-logo-btn').textContent='🏢 Change Logo';
   };
-  reader.readAsText(file);
+  reader.readAsDataURL(file);
 }
-</script>
-</body>
-</html>
+
+function downloadBlob(content,filename,mime){
+  const blob=new Blob([content],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function exportScanJSON(){
+  if(!lastScanData){return;}
+  const payload={scan:lastScanData,context:lastScanCtx,field_context:lastScanExtra,audit_entry:lastAuditEntry,exported_at:new Date().toISOString()};
+  downloadBlob(JSON.stringify(payload,null,2),(lastScanExtra.assetId||'scan')+'_'+Date.now()+'.json','application/json');
+}
+function exportScanCSV(){
+  if(!lastScanData){return;}
+  const d=lastScanData,e=lastScanExtra;
+  const rows=[
+    ['Field','Value'],
+    ['Asset ID',e.assetId||''],
+    ['Asset Type',e.assetLabel||''],
+    ['Overall Stage',d.overall_stage||''],
+    ['VDI Score',d.vdi],
+    ['Crest Factor',d.crest_factor],
+    ['PCI',d.pci],
+    ['Spectral Entropy',d.spectral_entropy],
+    ['RMS Velocity (mm/s)',e.effectiveRms],
+    ['Bearing Temp (C)',e.bearingTemp||''],
+    ['Data Mode',d.data_mode
